@@ -1,0 +1,39 @@
+channel:
+  name: newrelic-cli-integration-test-channel-webhook
+  type: webhook
+  configuration:
+    base_url: https://www.sos.ibm.com/hooks/test-tip-newrelic
+    headers:
+      Authorization: abcdefghijklmnopqrstuvwxyz123456
+    payload:
+      alert_id: AAAABBBB
+      alert_ui_url: $INCIDENT_URL
+      console: analytics
+      crn:
+        cname: internal
+        ctype: Local
+        location: DAL09
+        resource: ""
+        resource_type: ""
+        scope: ""
+        service_instance: WDPMON-1
+        service_name: WDPMON
+        version: v1
+      customer_impacting: "false"
+      disable_pager: "false"
+      long_description: 'Violated New Relic condition: $CONDITION_NAME. Details: $EVENT_DETAILS.
+        Policy: $POLICY_NAME. Account $ACCOUNT_NAME ($ACCOUNT_ID). URL: $INCIDENT_URL.'
+      nr_account_id: $ACCOUNT_ID
+      nr_account_name: $ACCOUNT_NAME
+      nr_current_state: $EVENT_STATE
+      nr_severity: $SEVERITY
+      nr_targets: $TARGETS
+      nr_timestamp: $TIMESTAMP
+      runbook_toc_enabled: "false"
+      runbook_url: $RUNBOOK_URL
+      short_description: 'Condition: $CONDITION_NAME. Details: $EVENT_DETAILS'
+      situation: $CONDITION_NAME
+      source: newrelic-$ACCOUNT_ID
+      tribe_name: WDPMON
+      version: "1.0"
+    payload_type: application/json

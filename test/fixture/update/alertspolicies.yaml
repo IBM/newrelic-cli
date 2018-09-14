@@ -1,0 +1,4 @@
+policy:
+  id: 236864
+  name: newrelic-cli-integration-test-policy-update
+  incident_preference: PER_POLICY

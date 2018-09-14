@@ -1,0 +1,24 @@
+{
+  "id": "9f5b47da-356a-4003-972b-4e123a1f0412",
+  "name": "Test-Script-Monitor",
+  "type": "SCRIPT_BROWSER",
+  "frequency": 1440,
+  "uri": "",
+  "locations": [
+    "AWS_US_EAST_1",
+    "AWS_US_WEST_1"
+  ],
+  "status": "ENABLED",
+  "slaThreshold": 7,
+  "userId": 0,
+  "apiVersion": "0.5.2",
+  "createdAt": "2018-08-02T07:47:55.193+0000",
+  "modifiedAt": "2018-08-08T08:10:58.604+0000",
+  "options": {},
+  "script": {
+    "scriptText": "Ly9WaXNpdCBodHRwczovL2RvY3MubmV3cmVsaWMuY29tCiRicm93c2VyLmdldCgiaHR0cHM6Ly9kb2NzLm5ld3JlbGljLmNvbSIpOwo="
+  },
+  "Labels": [
+    "Type:Script"
+  ]
+}

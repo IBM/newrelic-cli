@@ -1,0 +1,9 @@
+{
+    "channel": {
+        "name": "newrelic-cli-integration-test-channel-email",
+        "type": "email",
+        "configuration": {
+            "recipients": "newrelic-cli-integration-test-channel-email@ibm.com"
+        }
+    }
+}

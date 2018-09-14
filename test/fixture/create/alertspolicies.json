@@ -1,0 +1,7 @@
+{
+    "policy": {
+        "name": "newrelic-cli-integration-test-policy",
+        "incident_preference": "PER_POLICY"
+    }
+}
+
