@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	NEW_RELIC_APIKEY = "c60cd5e9e752a0204d29330cccf8207f"
+	NEW_RELIC_APIKEY = ""
 }
 
 func EXENRCLI(args ...string) {

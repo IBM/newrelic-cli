@@ -251,3 +251,7 @@ Global Flags:
 * Install `gox`
 * Enter project root folder
 * Run `gox -os "windows linux darwin" -arch "amd64"`
+
+## Acknowledgement
+
+Special thanks to [Huang Wei](https://github.com/Huang-Wei) who proposed this good idea and developed the initial version.
