@@ -34,10 +34,7 @@ var usersCmd = &cobra.Command{
 * nr get users -o json
 * nr get users -o yaml
 * nr get users -i 2102902
-* nr get users -i 2102902,+801314
-* nr get users -e wei.huang1@ibm.com
-* nr get users -e ibm.com
-* nr get users -i 2102902 -e ibm.com`,
+* nr get users -i 2102902,+801314`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := utils.GetNewRelicClient()
 		if err != nil {

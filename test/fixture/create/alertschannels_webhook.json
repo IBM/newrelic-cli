@@ -3,7 +3,7 @@
       "name": "newrelic-cli-integration-test-channel-webhook",
       "type": "webhook",
       "configuration": {
-        "base_url": "https://www.sos.ibm.com/hooks/test-tip-newrelic",
+        "base_url": "https://test.com/hooks/test",
         "headers": {
           "Authorization": "abcdefghijklmnopqrstuvwxyz123456"
         },

@@ -60,11 +60,8 @@ Use __nr get users__ command like this:<br>
 ```
 $ nr get users
 ID        FirstName   LastName    Email                Role
-2071178   Chris       Ratcliffe   chrisr@ca.ibm.com    admin
-2000900   Jack        Guan        jguan@ca.ibm.com     admin
-801314    Paul        van Run     pvanrun@ca.ibm.com   admin
-770658    Thomas      Schaeck     schaeck@de.ibm.com   owner
-2102902   Wei         Huang       wei.huang1@ibm.com   admin
+2071178   Tom       Smith       xxx@test.com    admin
+2000900   Jack        Xi        xxx@test.com     admin
 ```
 
 
@@ -75,9 +72,9 @@ $ nr get users -o json
   "users": [
     {
       "id": 2071178,
-      "first_name": "Chris",
-      "last_name": "Ratcliffe",
-      "email": "chrisr@ca.ibm.com",
+      "first_name": "Tom",
+      "last_name": "Smith",
+      "email": "xxx@tom.com",
       "role": "admin"
     },
 ......
@@ -88,10 +85,10 @@ $ nr get users -o json
 ```
 $ nr get users -o yaml
 users:
-- email: chrisr@ca.ibm.com
-  first_name: Chris
+- email: xxx@test.com
+  first_name: Tom
   id: 2071178
-  last_name: Ratcliffe
+  last_name: Smith
   role: admin
 ......
 ```
@@ -212,9 +209,6 @@ Examples:
 * nr get users -o yaml
 * nr get users -i 2102902
 * nr get users -i 2102902,+801314
-* nr get users -e wei.huang1@ibm.com
-* nr get users -e ibm.com
-* nr get users -i 2102902 -e ibm.com
 
 Flags:
   -e, --email string   email to filter returned result. can't specify emails
