@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## Set the NEW_RELIC_APIKEY env here if needed by comment out below export cmd
 #export NEW_RELIC_APIKEY="xxx-xxxx-xxx"

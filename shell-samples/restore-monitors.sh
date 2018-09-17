@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 noNRKey="No NEW_RELIC_APIKEY detected."
 noNRKey=${noNRKey}"\n\n"
