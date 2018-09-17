@@ -13,7 +13,11 @@ install:
 
 script:
 - make deps
+## Test
+## export NewRelic API key for running testing script
+- export NEW_RELIC_APIKEY=$NEW_RELIC_APIKEY
 - make test
+## Test
 - make build
 
 
