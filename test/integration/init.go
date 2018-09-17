@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 )
 
@@ -20,9 +19,9 @@ func EXENRCLI(args ...string) {
 
 	cmd := exec.Command("../../../nr", args...)
 
-	env := os.Environ()
-	env = append(env, "NEW_RELIC_APIKEY="+NEW_RELIC_APIKEY)
-	cmd.Env = env
+	// env := os.Environ()
+	// env = append(env, "NEW_RELIC_APIKEY="+NEW_RELIC_APIKEY)
+	// cmd.Env = env
 
 	var out bytes.Buffer
 	cmd.Stdout = &out

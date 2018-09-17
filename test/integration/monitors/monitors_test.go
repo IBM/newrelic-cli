@@ -12,9 +12,11 @@ import (
 
 func TestBackupMonitors(t *testing.T) {
 
-	i.EXENRCLI("backup", "monitors", "-d", "../../fixture/backup/monitors", "-r", "list.log")
+	i.EXEOperationCmd("mkdir", "-p", "./../../fixture/output/backup/monitors")
+
+	i.EXENRCLI("backup", "monitors", "-d", "../../fixture/output/backup/monitors", "-r", "list.log")
 
 	i.EXEOperationCmd("rm", "-rf", "./list.log")
-	i.EXEOperationCmd("rm", "-rf", "./../../fixture/backup/monitors")
-	i.EXEOperationCmd("mkdir", "-p", "./../../fixture/backup/monitors")
+	i.EXEOperationCmd("rm", "-rf", "./../../fixture/output/backup/monitors")
+
 }

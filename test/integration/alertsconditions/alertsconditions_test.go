@@ -12,9 +12,11 @@ import (
 
 func TestBackupAlertsConditions(t *testing.T) {
 
-	i.EXENRCLI("backup", "alertsconditions", "-d", "../../fixture/backup/alertsconditions", "-r", "list.log")
+	i.EXEOperationCmd("mkdir", "-p", "./../../fixture/output/backup/alertsconditions")
+
+	i.EXENRCLI("backup", "alertsconditions", "-d", "../../fixture/output/backup/alertsconditions", "-r", "list.log")
 
 	i.EXEOperationCmd("rm", "-rf", "./list.log")
-	i.EXEOperationCmd("rm", "-rf", "./../../fixture/backup/alertsconditions")
-	i.EXEOperationCmd("mkdir", "-p", "./../../fixture/backup/alertsconditions")
+	i.EXEOperationCmd("rm", "-rf", "./../../fixture/output/backup/alertsconditions")
+
 }
