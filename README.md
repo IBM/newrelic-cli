@@ -248,6 +248,11 @@ Global Flags:
 * Enter project root folder
 * Run `gox -os "windows linux darwin" -arch "amd64"`
 
+
+### How to run unit test
+* `export NEW_RELIC_APIKEY=<Your NewRelic API Key>` 
+* `make test`
+
 ## Acknowledgement
 
 Special thanks to [Huang Wei](https://github.com/Huang-Wei) who proposed this good idea and developed the initial version.
