@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 
 	"github.com/IBM/newrelic-cli/newrelic"
 )
@@ -67,6 +68,16 @@ func GetNewRelicClient(ctype ...string) (*newrelic.Client, error) {
 
 	proxyAuth := os.Getenv("PROXY_AUTH")
 	client.ProxyAuth = proxyAuth
+
+	retries := os.Getenv("RETRIES")
+	if retries != "" {
+		var err error
+		client.Retries, err = strconv.Atoi(retries)
+		if err != nil {
+			client.Retries = 3
+		}
+	}
+
 	return client, nil
 }
 

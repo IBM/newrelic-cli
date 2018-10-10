@@ -48,6 +48,7 @@ type Client struct {
 	UserAgent string
 	XApiKey   string
 	ProxyAuth string
+	Retries   int
 
 	common service
 
@@ -136,6 +137,9 @@ func NewClient(httpClient *http.Client, endpointType string) *Client {
 	c.Dashboards = (*DashboardService)(&c.common)
 
 	c.CustomEvents = (*CustomEventService)(&c.common)
+
+	c.Retries = 3
+
 	return c
 }
 
@@ -203,12 +207,15 @@ func (c *Client) NewRequestForNonJSON(method, urlStr string, body string) (*http
 	if c.XApiKey != "" {
 		req.Header.Set("X-Api-Key", c.XApiKey)
 	}
+	if c.ProxyAuth != "" {
+		basic := "Basic " + base64.StdEncoding.EncodeToString([]byte(c.ProxyAuth))
+		req.Header.Set("Proxy-Authorization", basic)
+	}
 	return req, nil
 }
 
 func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Response, error) {
-
-	var retries int = 3
+	var retries = c.Retries
 
 	var resp *http.Response
 	var err error
@@ -217,7 +224,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		if err != nil {
 			log.Println(err)
 			time.Sleep(time.Duration(3) * time.Second)
-			retries -= 1
+			retries--
 		} else {
 			break
 		}
@@ -255,7 +262,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 }
 
 func (c *Client) DoWithBytes(ctx context.Context, req *http.Request) (*Response, []byte, error) {
-	var retries int = 3
+	var retries = c.Retries
 
 	var resp *http.Response
 	var err error
@@ -264,7 +271,7 @@ func (c *Client) DoWithBytes(ctx context.Context, req *http.Request) (*Response,
 		if err != nil {
 			log.Println(err)
 			time.Sleep(time.Duration(3) * time.Second)
-			retries -= 1
+			retries--
 		} else {
 			break
 		}
