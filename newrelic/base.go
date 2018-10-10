@@ -23,10 +23,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/google/go-querystring/query"
 )
@@ -205,7 +207,21 @@ func (c *Client) NewRequestForNonJSON(method, urlStr string, body string) (*http
 }
 
 func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Response, error) {
-	resp, err := c.client.Do(req)
+
+	var retries int = 3
+
+	var resp *http.Response
+	var err error
+	for retries > 0 {
+		resp, err = c.client.Do(req)
+		if err != nil {
+			log.Println(err)
+			time.Sleep(time.Duration(3) * time.Second)
+			retries -= 1
+		} else {
+			break
+		}
+	}
 	if err != nil {
 		// If we got an error, and the context has been canceled,
 		// the context's error is probably more useful.
@@ -239,7 +255,20 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 }
 
 func (c *Client) DoWithBytes(ctx context.Context, req *http.Request) (*Response, []byte, error) {
-	resp, err := c.client.Do(req)
+	var retries int = 3
+
+	var resp *http.Response
+	var err error
+	for retries > 0 {
+		resp, err = c.client.Do(req)
+		if err != nil {
+			log.Println(err)
+			time.Sleep(time.Duration(3) * time.Second)
+			retries -= 1
+		} else {
+			break
+		}
+	}
 	if err != nil {
 		// If we got an error, and the context has been canceled,
 		// the context's error is probably more useful.
