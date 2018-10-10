@@ -101,9 +101,18 @@ Can configure proxy if the target machine can not directly connect to newrelic.c
 
 `export NEW_RELIC_PROXY=http://<user>:<password>@<ip>:<port>`
 
-Like:
+Like:<br>
 `export NEW_RELIC_PROXY=http://user1:password1@9.42.95.127:3128`
 
+
+* __Configure retries__
+
+Can configure retries for calling NewRelic REST API while some network issues, all NewRelic REST API callings in CLI would follow the retries. The default retries value is __3__ if `RETRIES` not configure 
+
+`export RETRIES=<times>`
+
+Like:<br>
+`export RETRIES=5`
 
 * __Return codes__
 
