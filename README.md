@@ -262,6 +262,9 @@ Global Flags:
 * `export NEW_RELIC_APIKEY=<Your NewRelic API Key>` 
 * `make test`
 
+## Changelog
+[Changelog](https://github.com/IBM/newrelic-cli/blob/master/CHANGELOG.md)
+
 ## Acknowledgement
 
 Special thanks to [Huang Wei](https://github.com/Huang-Wei) who proposed this good idea and developed the initial version.
