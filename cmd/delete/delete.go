@@ -30,7 +30,7 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	DeleteCmd.PersistentFlags().StringP("type-condition", "t", "default", "Alert condition type. Only used for 'alertsconditions' command. default|sythentics|ext|plugin|nrql are supported")
+	DeleteCmd.PersistentFlags().StringP("type-condition", "t", "default", "Alert condition type. Only used for 'alertsconditions' command. default|synthetics|ext|plugin|nrql are supported")
 
 	DeleteCmd.PersistentFlags().StringP("output", "o", "json", "Output format. json/yaml are supported")
 	// DeleteCmd.PersistentFlags().String("foo", "", "A help for foo")

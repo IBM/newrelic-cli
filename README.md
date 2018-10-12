@@ -202,7 +202,7 @@ Available Commands:
 Flags:
   -h, --help                    help for get
   -o, --output string           Output format. table/json/yaml are supported (default "table")
-  -t, --type-condition string   Alert condition type. Only used for 'alertsconditions' command. all|conditions|sythentics|ext|plugin|nrql are supported (default "all")
+  -t, --type-condition string   Alert condition type. Only used for 'alertsconditions' command. all|conditions|synthetics|ext|plugin|nrql are supported (default "all")
 ```
 
 <br>for `nr get users`, run:
@@ -228,7 +228,7 @@ Flags:
 
 Global Flags:
   -o, --output string           Output format. table/json/yaml are supported (default "table")
-  -t, --type-condition string   Alert condition type. Only used for 'alertsconditions' command. all|conditions|sythentics|ext|plugin|nrql are supported (default "all")
+  -t, --type-condition string   Alert condition type. Only used for 'alertsconditions' command. all|conditions|synthetics|ext|plugin|nrql are supported (default "all")
 ```
 
 

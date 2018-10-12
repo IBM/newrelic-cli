@@ -36,7 +36,7 @@ func init() {
 
 	UpdateCmd.PersistentFlags().StringP("output", "o", "json", "Output format. json/yaml are supported")
 
-	UpdateCmd.PersistentFlags().StringP("type-condition", "t", "default", "Alert condition type. Only used for 'alertsconditions' command. default|sythentics|ext|plugin|nrql are supported")
+	UpdateCmd.PersistentFlags().StringP("type-condition", "t", "default", "Alert condition type. Only used for 'alertsconditions' command. default|synthetics|ext|plugin|nrql are supported")
 
 	UpdateCmd.PersistentFlags().StringP("script-file", "s", "", "Synthetics monitor javascript file name. Only used for 'monitor' command.")
 	// Cobra supports local flags which will only run when this command

@@ -33,7 +33,7 @@ func init() {
 	CreateCmd.PersistentFlags().StringP("file", "f", "", "Filename to create resource with, yaml/json format is supported.")
 	CreateCmd.MarkPersistentFlagRequired("file")
 
-	CreateCmd.PersistentFlags().StringP("type-condition", "t", "default", "Alert condition type. Only used for 'alertsconditions' command. default|sythentics|ext|plugin|nrql are supported")
+	CreateCmd.PersistentFlags().StringP("type-condition", "t", "default", "Alert condition type. Only used for 'alertsconditions' command. default|synthetics|ext|plugin|nrql are supported")
 
 	CreateCmd.PersistentFlags().StringP("output", "o", "json", "Output format. json/yaml are supported")
 

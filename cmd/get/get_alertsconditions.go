@@ -30,9 +30,9 @@ import (
 
 var alertsconditionsCmd = &cobra.Command{
 	Use:     "alertsconditions",
-	Short:   "Display alert conditions by alert id.",
+	Short:   "Display alert conditions by alert policy id.",
 	Aliases: []string{"ac", "alertcondition", "alertscondition"},
-	Example: "nr get alertsconditions <id> -o json",
+	Example: "nr get alertsconditions <policy_id> -o json",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			var err = fmt.Errorf("length of [flags] should be 1 instead of %d", len(args))

@@ -2,3 +2,6 @@
 /vendor
 /dist
 /test/fixture/output
+/my-debug
+*.log
+/.vscode
