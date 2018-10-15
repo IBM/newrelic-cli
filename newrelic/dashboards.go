@@ -21,8 +21,17 @@ import (
 )
 
 type Dashboard struct {
-	// ID    *int64  `json:"id,omitempty"`
-	// Title *string `json:"title,omitempty"`
+	ID          *int64  `json:"id,omitempty"`
+	Title       *string `json:"title,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
+	//created_at
+	//updated_at
+	Visibility *string `json:"visibility,omitempty"`
+	Editable   *string `json:"editable,omitempty"`
+	UIURL      *string `json:"ui_url,omitempty"`
+	APIURL     *string `json:"api_url,omitempty"`
+	OwnerEmail *string `json:"owner_email,omitempty"`
 }
 
 type DashboardList struct {
@@ -34,6 +43,10 @@ type DashboardListOptions struct {
 }
 
 type DashboardService service
+
+type CreateDashboardResponse struct {
+	Dashboard *Dashboard `json:"dashboard,omitempty"`
+}
 
 func (s *DashboardService) ListAll(ctx context.Context, opt *DashboardListOptions) (*Response, []byte, error) {
 	u, err := addOptions("dashboards.json", opt)
