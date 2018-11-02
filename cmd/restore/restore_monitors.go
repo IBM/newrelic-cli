@@ -219,6 +219,7 @@ var monitorsCmd = &cobra.Command{
 		for _, restoreFileName := range restoreFileNameList {
 			var restoreMonitorMeta tracker.RestoreMonitorMeta = tracker.RestoreMonitorMeta{}
 			restoreMonitorMeta.FileName = restoreFileName
+			restoreMonitorMeta.OperationStatus = "fail"
 
 			fmt.Println("start to restore monitor in file: " + restoreFileName)
 			isBak := strings.HasSuffix(restoreFileName, ".monitor.bak")
@@ -228,6 +229,7 @@ var monitorsCmd = &cobra.Command{
 				defer restoreFile.Close()
 				if err != nil {
 					fmt.Printf("Unable to open file '%v': %v\n", restoreFileName, err)
+					restoreMonitorMeta.OperationStatus = "fail"
 					restoreMonitorMetaArray = append(restoreMonitorMetaArray, restoreMonitorMeta)
 					continue
 				}
@@ -237,11 +239,13 @@ var monitorsCmd = &cobra.Command{
 				err = decorder.Decode(p)
 				if err != nil {
 					fmt.Printf("Unable to decode %q: %v\n", restoreFileName, err)
+					restoreMonitorMeta.OperationStatus = "fail"
 					restoreMonitorMetaArray = append(restoreMonitorMetaArray, restoreMonitorMeta)
 					continue
 				}
 				if reflect.DeepEqual(new([]*newrelic.Monitor), p) {
 					fmt.Printf("Error validating %q.\n", restoreFileName)
+					restoreMonitorMeta.OperationStatus = "fail"
 					restoreMonitorMetaArray = append(restoreMonitorMetaArray, restoreMonitorMeta)
 					continue
 				}
