@@ -1,5 +1,13 @@
 # Change Log
 
+<a name="0.1.5"></a>
+# [0.1.5](https://github.com/IBM/newrelic-cli/compare/0.1.4...0.1.5) (2018-11-02)
+
+### Bug Fixes
+
+* **Monitor Restore Error Handling:** fix monitor Restore Error Handling ([#2](https://github.com/IBM/newrelic-cli/issues/5)) ([fbddd07](https://github.com/IBM/newrelic-cli/commit/fbddd07))
+
+
 <a name="0.1.4"></a>
 # [0.1.4](https://github.com/IBM/newrelic-cli/compare/0.1.3...0.1.4) (2018-10-12)
 
