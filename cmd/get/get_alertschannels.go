@@ -44,7 +44,20 @@ var alertschannelsCmd = &cobra.Command{
 			os.Exit(1)
 			return
 		}
-		printer, err := utils.NewPriter(cmd)
+
+		var printer utils.Printer
+
+		printer = &utils.JSONPrinter{}
+
+		var output string
+		flags := cmd.Flags()
+		if flags.Lookup("output") != nil {
+			output, err = cmd.Flags().GetString("output")
+			if output == "yaml" {
+				printer = &utils.YAMLPrinter{}
+			}
+		}
+
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
