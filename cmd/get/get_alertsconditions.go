@@ -73,7 +73,7 @@ var alertsconditionsCmd = &cobra.Command{
 				os.Exit(1)
 				return
 			}
-			if conditionType == "plugins" || conditionType == "synthetics" || conditionType == "ext" || conditionType == "nrql" || conditionType == "conditions" {
+			if conditionType == "plugins" || conditionType == "synthetics" || conditionType == "ext" || conditionType == "nrql" || conditionType == "conditions" || conditionType == "infrastructure" {
 				var cat newrelic.ConditionCategory
 				switch conditionType {
 				case "plugins":
@@ -84,6 +84,8 @@ var alertsconditionsCmd = &cobra.Command{
 					cat = newrelic.ConditionExternalService
 				case "nrql":
 					cat = newrelic.ConditionNRQL
+				case "infrastructure":
+					cat = newrelic.ConditionInfrastructure
 				default:
 					cat = newrelic.ConditionDefault
 				}
