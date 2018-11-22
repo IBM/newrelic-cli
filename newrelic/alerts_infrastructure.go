@@ -2,6 +2,7 @@ package newrelic
 
 import (
 	"context"
+	"fmt"
 )
 
 type infraConditions service
@@ -75,6 +76,23 @@ func (s *infraConditions) create(ctx context.Context, c *AlertsConditionEntity, 
 	}
 	c.AlertsInfrastructureConditionEntity.AlertsInfrastructureCondition.PolicyID = &policyID
 	req, err := s.client.NewRequest("POST", u, c.AlertsInfrastructureConditionEntity)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	condition := new(AlertsConditionEntity)
+	condition.AlertsInfrastructureConditionEntity = new(AlertsInfrastructureConditionEntity)
+	resp, err := s.client.Do(ctx, req, condition.AlertsInfrastructureConditionEntity)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return condition, resp, nil
+}
+
+func (s *infraConditions) update(ctx context.Context, c *AlertsConditionEntity, id int64) (*AlertsConditionEntity, *Response, error) {
+	u := fmt.Sprintf("%vconditions/%v", infrastructureURL, id)
+	req, err := s.client.NewRequest("PUT", u, c.AlertsInfrastructureConditionEntity)
 	if err != nil {
 		return nil, nil, err
 	}

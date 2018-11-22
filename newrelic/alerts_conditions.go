@@ -167,6 +167,8 @@ func (s *AlertsConditionsService) updateByCategory(cat ConditionCategory) func(c
 		return s.pluginsConditions.update
 	case ConditionSynthetics:
 		return s.syntheticsConditions.update
+	case ConditionInfrastructure:
+		return s.infraConditions.update
 	default:
 		return func(ctx context.Context, c *AlertsConditionEntity, conditionID int64) (*AlertsConditionEntity, *Response, error) {
 			return nil, nil, fmt.Errorf("unsupported category %q", cat)
