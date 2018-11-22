@@ -71,6 +71,8 @@ var alertsconditionsCmd = &cobra.Command{
 				cat = newrelic.ConditionExternalService
 			} else if conditionType == "nrql" {
 				cat = newrelic.ConditionNRQL
+			} else if conditionType == "infrastructure" {
+				cat = newrelic.ConditionInfrastructure
 			} else {
 				cat = newrelic.ConditionDefault
 			}

@@ -106,3 +106,13 @@ func (s *infraConditions) update(ctx context.Context, c *AlertsConditionEntity, 
 
 	return condition, resp, nil
 }
+
+func (s *infraConditions) deleteByID(ctx context.Context, id int64) (*Response, error) {
+	u := fmt.Sprintf("%vconditions/%v", infrastructureURL, id)
+	req, err := s.client.NewRequest("DELETE", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(ctx, req, nil)
+}
