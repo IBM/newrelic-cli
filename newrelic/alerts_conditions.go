@@ -62,6 +62,7 @@ type AlertsConditionEntity struct {
 	*AlertsNRQLConditionEntity
 	*AlertsPluginsConditionEntity
 	*AlertsSyntheticsConditionEntity
+	*AlertsInfrastructureConditionEntity
 }
 
 func (s *AlertsConditionsService) ListAll(ctx context.Context, opt *AlertsConditionsOptions) (*AlertsConditionList, error) {
@@ -145,6 +146,8 @@ func (s *AlertsConditionsService) createByCategory(cat ConditionCategory) func(c
 		return s.pluginsConditions.create
 	case ConditionSynthetics:
 		return s.syntheticsConditions.create
+	case ConditionInfrastructure:
+		return s.infraConditions.create
 	default:
 		return func(ctx context.Context, c *AlertsConditionEntity, policyID int64) (*AlertsConditionEntity, *Response, error) {
 			return nil, nil, fmt.Errorf("unsupported category %q", cat)

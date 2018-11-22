@@ -12,6 +12,11 @@ type AlertsInfrastructureConditionList struct {
 	AlertsInfrastructureConditions []*AlertsInfrastructureCondition `json:"data,omitempty"`
 }
 
+// AlertsInfrastructureConditionEntity infrastructure alert condition entity
+type AlertsInfrastructureConditionEntity struct {
+	AlertsInfrastructureCondition *AlertsInfrastructureCondition `json:"data,omitempty"`
+}
+
 // AlertsInfrastructureCondition object for infrastructure condition
 type AlertsInfrastructureCondition struct {
 	AlertsInfraThreshold
@@ -61,4 +66,25 @@ func (s *infraConditions) listAll(ctx context.Context, list *AlertsConditionList
 	}
 
 	return resp, nil
+}
+
+func (s *infraConditions) create(ctx context.Context, c *AlertsConditionEntity, policyID int64) (*AlertsConditionEntity, *Response, error) {
+	u := infrastructureURL + "conditions"
+	if c.AlertsInfrastructureConditionEntity.AlertsInfrastructureCondition.ID != nil {
+		c.AlertsInfrastructureConditionEntity.AlertsInfrastructureCondition.ID = nil
+	}
+	c.AlertsInfrastructureConditionEntity.AlertsInfrastructureCondition.PolicyID = &policyID
+	req, err := s.client.NewRequest("POST", u, c.AlertsInfrastructureConditionEntity)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	condition := new(AlertsConditionEntity)
+	condition.AlertsInfrastructureConditionEntity = new(AlertsInfrastructureConditionEntity)
+	resp, err := s.client.Do(ctx, req, condition.AlertsInfrastructureConditionEntity)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return condition, resp, nil
 }
