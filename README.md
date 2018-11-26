@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/IBM/newrelic-cli.svg?branch=master)](https://travis-ci.com/IBM/newrelic-cli)
 
-New Relic CLI is a command line tool which is used to operate New Relic objects(Synthetic monitors, alert policies, conditions, account users etc). You can use it easily to list/get/create/delete these objects. It can be used to backup your New Relic configuration data and restore in the future. It is easy to be used other than calling different REST API endpoints.
+New Relic CLI is a command line tool which is used to operate New Relic objects (Synthetic monitors, alert policies, conditions, account users etc). You can use it easily to list/get/create/delete these objects. It can be used to backup your New Relic configuration data and restore in the future. It is easy to be used other than calling different REST API endpoints.
 
 ## Wiki
 [Wiki](https://github.com/IBM/newrelic-cli/wiki)
@@ -182,7 +182,7 @@ done
 
 * __nr help command__
 
-The nr help command lists the nr CLI commands and a brief description of each. Passing the -h flag to any command lists detailed help, including any aliases. For example, to see detailed help for `nr get`, run:
+The nr help command lists the nr CLI commands and a brief description of each. Passing the `-h` flag to any command lists detailed help, including any aliases. For example, to see detailed help for `nr get`, run:
 
 ```
 $ nr get -h
@@ -196,7 +196,7 @@ Available Commands:
   alertsconditions Display alert conditions by alert id.
   alertspolicies   Display all alerts_policies.
   labels           Display all labels.
-  labelsmonitors   Display monitros by label.
+  labelsmonitors   Display monitors by label.
   monitor          Display a single monitor by id.
   monitors         Display all synthetics monitors.
   user             Display a single user by id.
