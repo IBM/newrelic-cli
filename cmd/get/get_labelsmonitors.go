@@ -30,7 +30,7 @@ import (
 // labelsmonitorsCmd represents the monitors command
 var labelsmonitorsCmd = &cobra.Command{
 	Use:   "labelsmonitors",
-	Short: "Display monitros by label.",
+	Short: "Display monitors by label.",
 	Example: `* nr get labelsmonitors <category:label>
 * nr get labelsmonitors Category:Label -o json
 * nr get labelsmonitors Category:Label -o yaml
