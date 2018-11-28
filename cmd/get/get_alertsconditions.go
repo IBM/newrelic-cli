@@ -197,6 +197,7 @@ func GetConditionsByAlertPolicyIDAndConditionType(id int64, cat newrelic.Conditi
 	alertsConditionList.AlertsNRQLConditionList = &newrelic.AlertsNRQLConditionList{}
 	alertsConditionList.AlertsPluginsConditionList = &newrelic.AlertsPluginsConditionList{}
 	alertsConditionList.AlertsSyntheticsConditionList = &newrelic.AlertsSyntheticsConditionList{}
+	alertsConditionList.AlertsInfrastructureConditionList = &newrelic.AlertsInfrastructureConditionList{}
 
 	var conditionsOptions *newrelic.AlertsConditionsOptions
 	conditionsOptions = new(newrelic.AlertsConditionsOptions)
@@ -282,6 +283,12 @@ func IsConditionNameExists(alertPolicyID int64, condtionName string, cat newreli
 		}
 	} else if cat == newrelic.ConditionSynthetics {
 		for _, condition := range list.AlertsSyntheticsConditions {
+			if *condition.Name == condtionName {
+				return true, *condition.ID, err, ret
+			}
+		}
+	} else if cat == newrelic.ConditionInfrastructure {
+		for _, condition := range list.AlertsInfrastructureConditions {
 			if *condition.Name == condtionName {
 				return true, *condition.ID, err, ret
 			}
