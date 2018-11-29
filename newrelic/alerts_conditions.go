@@ -188,6 +188,8 @@ func (s *AlertsConditionsService) deleteByCategory(cat ConditionCategory) func(c
 		return s.pluginsConditions.deleteByID
 	case ConditionSynthetics:
 		return s.syntheticsConditions.deleteByID
+	case ConditionInfrastructure:
+		return s.infraConditions.deleteByID
 	default:
 		return func(ctx context.Context, conditionID int64) (*Response, error) {
 			return nil, fmt.Errorf("unsupported category %q", cat)

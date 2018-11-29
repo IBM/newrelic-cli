@@ -33,7 +33,7 @@ var alertsconditionsCmd = &cobra.Command{
 	Use:     "alertsconditions",
 	Short:   "Create alerts_conditions from a file.",
 	Aliases: []string{"ac", "alertcondition", "alertscondition"},
-	Example: "nr create alertsconditions -f <example.yaml>",
+	Example: "nr create alertsconditions <policy id> -f <example.yaml>",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			var err = fmt.Errorf("length of [flags] should be 1 instead of %d", len(args))
