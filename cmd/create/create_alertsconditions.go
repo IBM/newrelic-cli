@@ -82,7 +82,8 @@ var alertsconditionsCmd = &cobra.Command{
 			var cat newrelic.ConditionCategory
 			var ac = new(newrelic.AlertsConditionEntity)
 
-			if conditionType == "plugins" {
+			switch conditionType {
+			case "plugins":
 				cat = newrelic.ConditionPlugins
 				var ace = new(newrelic.AlertsPluginsConditionEntity)
 				err = decorder.Decode(ace)
@@ -99,7 +100,7 @@ var alertsconditionsCmd = &cobra.Command{
 				ac.AlertsPluginsConditionEntity = ace
 
 				cat = newrelic.ConditionPlugins
-			} else if conditionType == "synthetics" {
+			case "synthetics":
 				var ace = new(newrelic.AlertsSyntheticsConditionEntity)
 				err = decorder.Decode(ace)
 				if err != nil {
@@ -115,7 +116,7 @@ var alertsconditionsCmd = &cobra.Command{
 				ac.AlertsSyntheticsConditionEntity = ace
 
 				cat = newrelic.ConditionSynthetics
-			} else if conditionType == "ext" {
+			case "ext":
 				var ace = new(newrelic.AlertsExternalServiceConditionEntity)
 				err = decorder.Decode(ace)
 				if err != nil {
@@ -131,7 +132,7 @@ var alertsconditionsCmd = &cobra.Command{
 				ac.AlertsExternalServiceConditionEntity = ace
 
 				cat = newrelic.ConditionExternalService
-			} else if conditionType == "nrql" {
+			case "nrql":
 				var ace = new(newrelic.AlertsNRQLConditionEntity)
 				err = decorder.Decode(ace)
 				if err != nil {
@@ -147,7 +148,23 @@ var alertsconditionsCmd = &cobra.Command{
 				ac.AlertsNRQLConditionEntity = ace
 
 				cat = newrelic.ConditionNRQL
-			} else {
+			case "infrastructure":
+				var ace = new(newrelic.AlertsInfrastructureConditionEntity)
+				err = decorder.Decode(ace)
+				if err != nil {
+					fmt.Printf("Unable to decode for infrastructure type condition %q: %v\n", file, err)
+					os.Exit(1)
+					return
+				}
+				if reflect.DeepEqual(new(newrelic.AlertsInfrastructureConditionEntity), ace) {
+					fmt.Printf("Error validating for infrastructure type condition %q.\n", file)
+					os.Exit(1)
+					return
+				}
+				ac.AlertsInfrastructureConditionEntity = ace
+
+				cat = newrelic.ConditionInfrastructure
+			default:
 				var ace = new(newrelic.AlertsDefaultConditionEntity)
 				err = decorder.Decode(ace)
 				if err != nil {

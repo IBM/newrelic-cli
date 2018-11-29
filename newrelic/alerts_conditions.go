@@ -27,6 +27,7 @@ const (
 	ConditionExternalService ConditionCategory = "external_service_condition"
 	ConditionSynthetics      ConditionCategory = "synthetics_condition"
 	ConditionNRQL            ConditionCategory = "nrql_condition"
+	ConditionInfrastructure  ConditionCategory = "infrastructure_condition"
 )
 
 type ConditionCategory string
@@ -37,6 +38,7 @@ type AlertsConditionsService struct {
 	*externalServiceConditions
 	*syntheticsConditions
 	*nrqlConditions
+	*infraConditions
 }
 
 type AlertsConditionsOptions struct {
@@ -51,6 +53,7 @@ type AlertsConditionList struct {
 	*AlertsNRQLConditionList
 	*AlertsPluginsConditionList
 	*AlertsSyntheticsConditionList
+	*AlertsInfrastructureConditionList
 }
 
 type AlertsConditionEntity struct {
@@ -59,6 +62,7 @@ type AlertsConditionEntity struct {
 	*AlertsNRQLConditionEntity
 	*AlertsPluginsConditionEntity
 	*AlertsSyntheticsConditionEntity
+	*AlertsInfrastructureConditionEntity
 }
 
 func (s *AlertsConditionsService) ListAll(ctx context.Context, opt *AlertsConditionsOptions) (*AlertsConditionList, error) {
@@ -67,7 +71,7 @@ func (s *AlertsConditionsService) ListAll(ctx context.Context, opt *AlertsCondit
 	}
 
 	list := new(AlertsConditionList)
-	cats := []ConditionCategory{ConditionDefault, ConditionPlugins, ConditionExternalService, ConditionSynthetics, ConditionNRQL}
+	cats := []ConditionCategory{ConditionDefault, ConditionPlugins, ConditionExternalService, ConditionSynthetics, ConditionNRQL, ConditionInfrastructure}
 	for _, cat := range cats {
 		// TODO: paralleize and use ctx.Done() to cancel the parent context
 		listFunc := s.listByCategory(cat)
@@ -121,6 +125,8 @@ func (s *AlertsConditionsService) listByCategory(cat ConditionCategory) func(ctx
 		return s.pluginsConditions.listAll
 	case ConditionSynthetics:
 		return s.syntheticsConditions.listAll
+	case ConditionInfrastructure:
+		return s.infraConditions.listAll
 	default:
 		return func(ctx context.Context, list *AlertsConditionList, opt *AlertsConditionsOptions) (*Response, error) {
 			return nil, fmt.Errorf("unsupported category %q", cat)
@@ -140,6 +146,8 @@ func (s *AlertsConditionsService) createByCategory(cat ConditionCategory) func(c
 		return s.pluginsConditions.create
 	case ConditionSynthetics:
 		return s.syntheticsConditions.create
+	case ConditionInfrastructure:
+		return s.infraConditions.create
 	default:
 		return func(ctx context.Context, c *AlertsConditionEntity, policyID int64) (*AlertsConditionEntity, *Response, error) {
 			return nil, nil, fmt.Errorf("unsupported category %q", cat)
@@ -159,6 +167,8 @@ func (s *AlertsConditionsService) updateByCategory(cat ConditionCategory) func(c
 		return s.pluginsConditions.update
 	case ConditionSynthetics:
 		return s.syntheticsConditions.update
+	case ConditionInfrastructure:
+		return s.infraConditions.update
 	default:
 		return func(ctx context.Context, c *AlertsConditionEntity, conditionID int64) (*AlertsConditionEntity, *Response, error) {
 			return nil, nil, fmt.Errorf("unsupported category %q", cat)

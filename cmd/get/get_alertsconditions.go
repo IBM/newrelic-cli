@@ -73,7 +73,7 @@ var alertsconditionsCmd = &cobra.Command{
 				os.Exit(1)
 				return
 			}
-			if conditionType == "plugins" || conditionType == "synthetics" || conditionType == "ext" || conditionType == "nrql" || conditionType == "conditions" {
+			if conditionType == "plugins" || conditionType == "synthetics" || conditionType == "ext" || conditionType == "nrql" || conditionType == "conditions" || conditionType == "infrastructure" {
 				var cat newrelic.ConditionCategory
 				switch conditionType {
 				case "plugins":
@@ -84,6 +84,8 @@ var alertsconditionsCmd = &cobra.Command{
 					cat = newrelic.ConditionExternalService
 				case "nrql":
 					cat = newrelic.ConditionNRQL
+				case "infrastructure":
+					cat = newrelic.ConditionInfrastructure
 				default:
 					cat = newrelic.ConditionDefault
 				}
@@ -195,6 +197,7 @@ func GetConditionsByAlertPolicyIDAndConditionType(id int64, cat newrelic.Conditi
 	alertsConditionList.AlertsNRQLConditionList = &newrelic.AlertsNRQLConditionList{}
 	alertsConditionList.AlertsPluginsConditionList = &newrelic.AlertsPluginsConditionList{}
 	alertsConditionList.AlertsSyntheticsConditionList = &newrelic.AlertsSyntheticsConditionList{}
+	alertsConditionList.AlertsInfrastructureConditionList = &newrelic.AlertsInfrastructureConditionList{}
 
 	var conditionsOptions *newrelic.AlertsConditionsOptions
 	conditionsOptions = new(newrelic.AlertsConditionsOptions)
@@ -280,6 +283,12 @@ func IsConditionNameExists(alertPolicyID int64, condtionName string, cat newreli
 		}
 	} else if cat == newrelic.ConditionSynthetics {
 		for _, condition := range list.AlertsSyntheticsConditions {
+			if *condition.Name == condtionName {
+				return true, *condition.ID, err, ret
+			}
+		}
+	} else if cat == newrelic.ConditionInfrastructure {
+		for _, condition := range list.AlertsInfrastructureConditions {
 			if *condition.Name == condtionName {
 				return true, *condition.ID, err, ret
 			}

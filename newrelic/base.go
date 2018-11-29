@@ -39,6 +39,7 @@ const (
 	userAgent          = "go-newrelic"
 	labelSyntheticsURL = "https://synthetics.newrelic.com/synthetics/api/v4/monitors/"
 	insightsURL        = "https://insights-collector.newrelic.com/v1/accounts/"
+	infrastructureURL  = "https://infra-api.newrelic.com/v2/alerts/"
 )
 
 type Client struct {
@@ -97,16 +98,17 @@ func NewClient(httpClient *http.Client, endpointType string) *Client {
 	}
 	var baseURL *url.URL
 
-	if endpointType != "synthetics" && endpointType != "labelSynthetics" && endpointType != "insights" {
+	switch endpointType {
+	case "synthetics":
+		baseURL, _ = url.Parse(syntheticsURL)
+	case "labelSynthetics":
+		baseURL, _ = url.Parse(labelSyntheticsURL)
+	case "insights":
+		baseURL, _ = url.Parse(insightsURL)
+	case "infrastructure":
+		baseURL, _ = url.Parse(infrastructureURL)
+	default:
 		baseURL, _ = url.Parse(defaultBaseURL)
-	} else {
-		if endpointType == "synthetics" {
-			baseURL, _ = url.Parse(syntheticsURL)
-		} else if endpointType == "labelSynthetics" {
-			baseURL, _ = url.Parse(labelSyntheticsURL)
-		} else if endpointType == "insights" {
-			baseURL, _ = url.Parse(insightsURL)
-		}
 	}
 
 	c := &Client{
@@ -129,6 +131,7 @@ func NewClient(httpClient *http.Client, endpointType string) *Client {
 	c.AlertsConditions.externalServiceConditions = (*externalServiceConditions)(&c.common)
 	c.AlertsConditions.syntheticsConditions = (*syntheticsConditions)(&c.common)
 	c.AlertsConditions.nrqlConditions = (*nrqlConditions)(&c.common)
+	c.AlertsConditions.infraConditions = (*infraConditions)(&c.common)
 
 	c.SyntheticsMonitors = (*SyntheticsService)(&c.common)
 	c.SyntheticsScript = (*ScriptService)(&c.common)
