@@ -1,5 +1,13 @@
 # Change Log
 
+
+<a name="0.1.6"></a>
+# [0.1.6](https://github.com/IBM/newrelic-cli/compare/0.1.5...0.1.6) (2018-11-29)
+
+### Features
+
+* **Infrastructure alerts:** operation infrastructure alerts ([cc910f2](https://github.com/IBM/newrelic-cli/commit/cc910f2))
+
 <a name="0.1.5"></a>
 # [0.1.5](https://github.com/IBM/newrelic-cli/compare/0.1.4...0.1.5) (2018-11-02)
 
