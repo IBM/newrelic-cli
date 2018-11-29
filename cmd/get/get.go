@@ -33,7 +33,7 @@ func init() {
 	// GetCmd.PersistentFlags().String("foo", "", "A help for foo")
 	GetCmd.PersistentFlags().StringP("output", "o", "table", "Output format. table/json/yaml are supported")
 
-	GetCmd.PersistentFlags().StringP("type-condition", "t", "all", "Alert condition type. Only used for 'alertsconditions' command. all|conditions|synthetics|ext|plugin|nrql are supported")
+	GetCmd.PersistentFlags().StringP("type-condition", "t", "all", "Alert condition type. Only used for 'alertsconditions' command. all|conditions|synthetics|ext|plugin|nrql|infrastructure are supported")
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// GetCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
