@@ -1,0 +1,11 @@
+{
+	"channel": {
+		"configuration": {
+			"room": "${room}",
+            "subdomain": "${subdomain}",
+            "token": "${token}"
+		},
+		"name": "${name}",
+		"type": "campfire"
+	}
+}

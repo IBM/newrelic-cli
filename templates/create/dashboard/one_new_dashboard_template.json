@@ -1,0 +1,35 @@
+{
+  "dashboard": {
+    "title": "${dashboard_name}", 
+    "description": null, 
+    "icon": "bar-chart",
+    "visibility": "all", 
+    "editable": "editable_by_all",
+    "owner_email": "${owner_email}", 
+    "metadata": {
+      "version": 1
+    }, 
+    "widgets": [
+      {
+        "visualization": "comparison_line_chart", 
+        "layout": {
+          "width": 1, 
+          "height": 1, 
+          "row": 1, 
+          "column": 1
+        },
+        "data": [
+          {
+            "nrql": "${nrql}"
+          }
+        ], 
+        "presentation": {
+          "title": "${widget_title}", 
+          "notes": null
+        }
+      }
+    ], 
+    "filter": null
+  }
+}
+

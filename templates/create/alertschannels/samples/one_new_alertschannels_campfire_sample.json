@@ -1,0 +1,11 @@
+{
+	"channel": {
+		"configuration": {
+			"room": "room1",
+            "subdomain": "mysubdomain",
+            "token": "123abc"
+		},
+		"name": "My Campfire",
+		"type": "campfire"
+	}
+}

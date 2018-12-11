@@ -1,0 +1,10 @@
+{
+    "channel":{
+        "configuration": {
+            "recipients" : "test@google.com",
+            "include_json_attachment" : true
+        },
+        "name": "My Test",
+        "type": "email"
+    }
+}

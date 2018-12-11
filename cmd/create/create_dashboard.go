@@ -30,8 +30,9 @@ import (
 
 // dashboardCmd represents the dashboard command
 var dashboardCmd = &cobra.Command{
-	Use:   "dashboard",
-	Short: "Create dashboard from a json file.",
+	Use:     "dashboard",
+	Short:   "Create dashboard from a json file.",
+	Example: "nr create dashboard -f <example.yaml>",
 	Run: func(cmd *cobra.Command, args []string) {
 		fileName, err := utils.GetArg(cmd, "file")
 		if err != nil {
@@ -64,6 +65,9 @@ var dashboardCmd = &cobra.Command{
 			os.Exit(1)
 			return
 		}
+
+		tracker.PrintStatisticsInfo(tracker.GlobalRESTCallResultList)
+		fmt.Println()
 
 		os.Exit(0)
 	},

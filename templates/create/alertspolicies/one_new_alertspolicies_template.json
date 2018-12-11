@@ -1,0 +1,6 @@
+{
+    "policy":{
+        "incident_preference": "PER_POLICY",
+        "name": "${policy_name}"
+    }
+  }

@@ -1,0 +1,8 @@
+{
+	"synthetics_condition": {
+	  "name": "string",
+	  "monitor_id": "string",
+	  "runbook_url": "string",
+	  "enabled": "boolean"
+	}
+}

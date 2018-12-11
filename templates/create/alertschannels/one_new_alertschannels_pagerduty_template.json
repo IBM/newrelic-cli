@@ -1,0 +1,9 @@
+{
+    "channel":{
+        "configuration": {
+            "service_key": "${service_key}"
+        },
+        "name": "${name}",
+        "type": "pagerduty"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "channel":{
+        "configuration": {
+            "key": "${key}",
+            "route_key": "${route_key}"
+        },
+        "name": "${name}",
+        "type": "victorops"
+    }
+}

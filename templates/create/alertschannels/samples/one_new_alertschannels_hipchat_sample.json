@@ -1,0 +1,10 @@
+{
+    "channel":{
+        "configuration": {
+            "auth_token": "123abc",
+            "room_id": "google.com"
+        },
+        "name": "${name}",
+        "type": "hipchat"
+    }
+}

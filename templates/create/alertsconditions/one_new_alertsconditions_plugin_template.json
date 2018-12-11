@@ -1,0 +1,26 @@
+{
+  "plugins_condition": {
+    "name": "string",
+    "enabled": "boolean",
+    "entities": [
+      "integer"
+    ],
+    "metric_description": "string",
+    "metric": "string",
+    "value_function": "string",
+    "runbook_url": "string",
+    "terms": [
+      {
+        "duration": "string",
+        "operator": "string",
+        "priority": "string",
+        "threshold": "string",
+        "time_function": "string"
+      }
+    ],
+    "plugin": {
+      "id": "string",
+      "guid": "string"
+    }
+  }
+}

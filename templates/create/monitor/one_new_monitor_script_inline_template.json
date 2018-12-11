@@ -1,0 +1,16 @@
+{
+  "name": "${monitor_name}",
+  "type": "SCRIPT_BROWSER",
+  "frequency": 1440,
+  "uri": "",
+  "locations": [
+    "AWS_US_WEST_1"
+  ],
+  "status": "ENABLED",
+  "slaThreshold": 7,
+  "userId": 0,
+  "options": {},
+  "script": {
+    "scriptText": "${base64_encoded_content}"
+  }
+}

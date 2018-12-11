@@ -1,0 +1,13 @@
+{
+    "name": "Ping NewRelic Docs",
+    "type": "SIMPLE",
+    "frequency": 10,
+    "uri": "https://docs.newrelic.com/",
+    "locations": [
+      "AWS_US_WEST_1"
+    ],
+    "status": "ENABLED",
+    "slaThreshold": 7,
+    "userId": 0,
+    "options": {}
+  }

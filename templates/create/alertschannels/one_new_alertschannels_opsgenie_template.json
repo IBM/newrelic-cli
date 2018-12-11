@@ -1,0 +1,12 @@
+{
+    "channel":{
+        "configuration": {
+            "api_key": "${api_key}",
+            "teams": "${teams}",
+            "tags": "${tag}",
+            "recipients": "${recipients}"
+        },
+        "name": "${name}",
+        "type": "opsgenie"
+    }
+}

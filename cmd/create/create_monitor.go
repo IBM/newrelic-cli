@@ -112,6 +112,9 @@ var monitorCmd = &cobra.Command{
 			return
 		}
 
+		tracker.PrintStatisticsInfo(tracker.GlobalRESTCallResultList)
+		fmt.Println()
+
 		os.Exit(0)
 	},
 }

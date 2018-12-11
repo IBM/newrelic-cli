@@ -1,0 +1,27 @@
+{
+  "condition": {
+    "type": "string",
+    "name": "string",
+    "enabled": "boolean",
+    "entities": [
+      "integer"
+    ],
+    "metric": "string",
+    "gc_metric": "string",
+    "condition_scope": "string",
+    "violation_close_timer": "integer",
+    "terms": [
+      {
+        "duration": "string",
+        "operator": "string",
+        "priority": "string",
+        "threshold": "string",
+        "time_function": "string"
+      }
+    ],
+    "user_defined": {
+      "metric": "string",
+      "value_function": "string"
+    }
+  }
+}

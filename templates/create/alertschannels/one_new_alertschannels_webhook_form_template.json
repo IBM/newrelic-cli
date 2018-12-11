@@ -1,0 +1,35 @@
+{
+	"channel": {
+		"configuration": {
+			"auth_password": "${auth_password}",
+			"auth_username": "${auth_username}",
+			"base_url": "${base_url}",
+			"headers": {
+				"header1": "${header1}"
+			},
+			"payload": {
+				"account_id": "$ACCOUNT_ID",
+				"account_name": "$ACCOUNT_NAME",
+				"condition_id": "$CONDITION_ID",
+				"condition_name": "$CONDITION_NAME",
+				"current_state": "$EVENT_STATE",
+				"details": "$EVENT_DETAILS",
+				"event_type": "$EVENT_TYPE",
+				"incident_acknowledge_url": "$INCIDENT_ACKNOWLEDGE_URL",
+				"incident_id": "$INCIDENT_ID",
+				"incident_url": "$INCIDENT_URL",
+				"owner": "$EVENT_OWNER",
+				"policy_name": "$POLICY_NAME",
+				"policy_url": "$POLICY_URL",
+				"runbook_url": "$RUNBOOK_URL",
+				"severity": "$SEVERITY",
+				"targets": "$TARGETS",
+				"timestamp": "$TIMESTAMP",
+				"violation_chart_url": "$VIOLATION_CHART_URL"
+			},
+			"payload_type": "application/x-www-form-urlencoded"
+		},
+		"name": "${name}",
+		"type": "webhook"
+	}
+}

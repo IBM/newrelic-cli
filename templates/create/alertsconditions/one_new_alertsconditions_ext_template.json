@@ -1,0 +1,22 @@
+{
+  "external_service_condition": {
+    "type": "string",
+    "name": "string",
+    "enabled": "boolean",
+    "entities": [
+      "integer"
+    ],
+    "external_service_url": "string",
+    "metric": "string",
+    "runbook_url": "string",
+    "terms": [
+      {
+        "duration": "string",
+        "operator": "string",
+        "priority": "string",
+        "threshold": "string",
+        "time_function": "string"
+      }
+    ]
+  }
+}

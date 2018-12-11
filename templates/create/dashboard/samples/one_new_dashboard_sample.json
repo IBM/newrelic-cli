@@ -1,0 +1,35 @@
+{
+  "dashboard": {
+    "title": "My Test Dashboard", 
+    "description": null, 
+    "icon": "bar-chart",
+    "visibility": "all", 
+    "editable": "editable_by_all",
+    "owner_email": "test@test.com", 
+    "metadata": {
+      "version": 1
+    }, 
+    "widgets": [
+      {
+        "visualization": "comparison_line_chart", 
+        "layout": {
+          "width": 1, 
+          "height": 1, 
+          "row": 1, 
+          "column": 1
+        },
+        "data": [
+          {
+            "nrql": "SELECT count(*) FROM SyntheticRequest SINCE 30 MINUTES AGO COMPARE WITH 1 WEEK AGO TIMESERIES"
+          }
+        ], 
+        "presentation": {
+          "title": "Synthetic Request", 
+          "notes": null
+        }
+      }
+    ], 
+    "filter": null
+  }
+}
+

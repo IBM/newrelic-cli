@@ -22,6 +22,7 @@ import (
 	"reflect"
 
 	"github.com/IBM/newrelic-cli/newrelic"
+	"github.com/IBM/newrelic-cli/tracker"
 	"github.com/IBM/newrelic-cli/utils"
 	"github.com/spf13/cobra"
 )
@@ -76,6 +77,10 @@ var alertschannelsCmd = &cobra.Command{
 				os.Exit(1)
 			}
 		}
+
+		tracker.PrintStatisticsInfo(tracker.GlobalRESTCallResultList)
+		fmt.Println()
+
 		os.Exit(0)
 	},
 }
