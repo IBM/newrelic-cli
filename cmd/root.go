@@ -27,6 +27,7 @@ import (
 	insertCmd "github.com/IBM/newrelic-cli/cmd/insert"
 	patchCmd "github.com/IBM/newrelic-cli/cmd/patch"
 	restoreCmd "github.com/IBM/newrelic-cli/cmd/restore"
+	takeCmd "github.com/IBM/newrelic-cli/cmd/take"
 	updateCmd "github.com/IBM/newrelic-cli/cmd/update"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -80,6 +81,7 @@ func init() {
 	rootCmd.AddCommand(restoreCmd.RestoreCmd)
 	rootCmd.AddCommand(addCmd.AddCmd)
 	rootCmd.AddCommand(insertCmd.InsertCmd)
+	rootCmd.AddCommand(takeCmd.TakeCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
