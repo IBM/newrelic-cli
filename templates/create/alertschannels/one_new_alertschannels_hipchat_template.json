@@ -1,0 +1,10 @@
+{
+    "channel":{
+        "configuration": {
+            "auth_token": "${token}",
+            "room_id": "${room_id}"
+        },
+        "name": "${name}",
+        "type": "hipchat"
+    }
+}

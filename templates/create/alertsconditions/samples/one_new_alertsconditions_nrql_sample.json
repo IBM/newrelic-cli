@@ -1,0 +1,22 @@
+{
+	"nrql_condition": {
+		"name": "Duration Condition",
+		"runbook_url": "http://test.runbook.com",
+		"enabled": true,
+		"terms": [
+		  {
+			"duration": "5",
+			"operator": "above",
+			"priority": "critical",
+			"threshold": "3000",
+			"time_function": "all"
+		  }
+		],
+		"value_function": "single_value",
+		"nrql": {
+		  "query": "SELECT average(duration) FROM SyntheticCheck",
+		  "since_value": "3"
+		}
+	  }
+  }
+  

@@ -1,0 +1,23 @@
+{
+  "nrql_condition": {
+    "name": "string",
+    "runbook_url": "string",
+    "enabled": "boolean",
+    "expected_groups": "integer",
+    "ignore_overlap": "boolean",
+    "value_function": "string",
+    "terms": [
+      {
+        "duration": "string",
+        "operator": "string",
+        "priority": "string",
+        "threshold": "string",
+        "time_function": "string"
+      }
+    ],
+    "nrql": {
+      "query": "string",
+      "since_value": "string"
+    }
+  }
+}

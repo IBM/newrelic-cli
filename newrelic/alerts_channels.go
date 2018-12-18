@@ -34,6 +34,7 @@ func init() {
 	channelTypes[ChannelByHipChat] = func() interface{} { return new(ChannelHipChatConfig) }
 	channelTypes[ChannelByOpsGenie] = func() interface{} { return new(ChannelOpsGenieConfig) }
 	channelTypes[ChannelByVictorOps] = func() interface{} { return new(ChannelVictorOpsConfig) }
+	channelTypes[ChannelByXMatters] = func() interface{} { return new(ChannelXMattersConfig) }
 }
 
 type AlertsChannelType string
@@ -49,6 +50,7 @@ const (
 	ChannelByHipChat   AlertsChannelType = "hipchat"
 	ChannelByOpsGenie  AlertsChannelType = "opsgenie"
 	ChannelByVictorOps AlertsChannelType = "victorops"
+	ChannelByXMatters  AlertsChannelType = "xmatters"
 	// TODO: complete possible options: e.g. xMatters
 
 	ChannelWebhookByJSON AlertsChannelWebhookType = "application/json"
@@ -108,6 +110,11 @@ type ChannelCampfireConfig struct {
 type ChannelVictorOpsConfig struct {
 	Key      *string `json:"key,omitempty"`
 	RouteKey *string `json:"route_key,omitempty"`
+}
+
+type ChannelXMattersConfig struct {
+	URL     *string `json:"url,omitempty"`
+	Channel *string `json:"channel,omitempty"`
 }
 
 type AlertsChannelsService service

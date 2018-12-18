@@ -1,0 +1,19 @@
+{
+  "name": "Ping NewRelic Docs",
+  "type": "SCRIPT_BROWSER",
+  "frequency": 1440,
+  "uri": "",
+  "locations": [
+    "AWS_US_WEST_1"
+  ],
+  "status": "ENABLED",
+  "slaThreshold": 7,
+  "userId": 0,
+  "apiVersion": "0.5.2",
+  "createdAt": "2018-12-10T02:50:17.232+0000",
+  "modifiedAt": "2018-12-10T02:50:17.232+0000",
+  "options": {},
+  "script": {
+    "scriptText": "LyoqCiAqIEZlZWwgZnJlZSB0byBleHBsb3JlLCBvciBjaGVjayBvdXQgdGhlIGZ1bGwgZG9jdW1lbnRhdGlvbgogKiBodHRwczovL2RvY3MubmV3cmVsaWMuY29tL2RvY3Mvc3ludGhldGljcy9uZXctcmVsaWMtc3ludGhldGljcy9zY3JpcHRpbmctbW9uaXRvcnMvd3JpdGluZy1zY3JpcHRlZC1icm93c2VycwogKiBmb3IgZGV0YWlscy4KICovCgp2YXIgYXNzZXJ0ID0gcmVxdWlyZSgnYXNzZXJ0Jyk7CgokYnJvd3Nlci5nZXQoImh0dHBzOi8vZG9jcy5uZXdyZWxpYy5jb20iKTsK"
+  }
+}

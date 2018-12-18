@@ -1,0 +1,10 @@
+{
+    "channel":{
+        "configuration": {
+            "recipients" : "${email}",
+            "include_json_attachment" : true
+        },
+        "name": "${name}",
+        "type": "email"
+    }
+}

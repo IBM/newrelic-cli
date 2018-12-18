@@ -1,0 +1,12 @@
+{
+    "channel":{
+        "configuration": {
+            "api_key": "abc123",
+            "teams": "team1",
+            "tags": "tag1",
+            "recipients": "me@me.com"
+        },
+        "name": "My OpsGenie",
+        "type": "opsgenie"
+    }
+}

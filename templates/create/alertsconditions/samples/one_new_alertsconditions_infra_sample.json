@@ -1,0 +1,17 @@
+{
+    "data": 
+      {
+        "critical_threshold": {
+          "duration_minutes": 3,
+          "time_function": "all",
+          "value": 90
+        },
+        "comparison": "above",
+        "enabled": true,
+        "event_type": "SystemSample",
+        "name": "Infrastructure Alert Condition NEW",
+        "select_value": "cpuPercent",
+        "type": "infra_metric"
+      }
+  }
+  

@@ -1,0 +1,8 @@
+{
+	"synthetics_condition": {
+		"enabled": true,
+		"monitor_id": "fa163f12-5bdb-4a80-9e8f-8a12ea972d59",
+		"name": "Test Synthetics Conditions",
+		"runbook_url": "http://test.runbook.com"
+	}
+}
