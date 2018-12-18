@@ -44,6 +44,7 @@ nr | backup | dashboards | - | -d &lt;backup_folder&gt;<br> -r &lt;result_file.l
 nr | restore | monitors | - | -d &lt;monitors_folder&gt;<br> -f &lt;monitor_filenames&gt;<br> -F &lt;file_contains_names&gt;<br> -m [skip\\|override\\|clean]<br> -r &lt;result_file.log&gt;<br>
 nr | restore | alertsconditions | - |  -d &lt;alertsconditions_folder&gt;<br> -f &lt;alertscondition_filenames&gt;<br> -F &lt;file_contains_names&gt;<br> -m [skip\\|override\\|clean]<br> -r &lt;result_file.log&gt;<br>
 nr | restore | dashboards | - |  -d &lt;dashboards_folder&gt;<br> -f &lt;dashboard_filenames&gt;<br> -F &lt;file_contains_names&gt;<br> -m [skip\\|override\\|clean]<br> -r &lt;result_file.log&gt;<br>
+nr | take | template | &lt;template type name&gt; | 
 
 ## To start using nr CLI
 

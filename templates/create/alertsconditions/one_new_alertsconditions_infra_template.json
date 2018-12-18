@@ -1,17 +1,15 @@
 {
-    "data": 
-      {
-        "critical_threshold": {
-          "duration_minutes": 3,
-          "time_function": "all",
-          "value": 90
-        },
-        "comparison": "above",
-        "enabled": true,
-        "event_type": "${event_type}",
-        "name": "${name}",
-        "select_value": "cpuPercent",
-        "type": "${type}"
-      }
-  }
-  
+	"data": {
+		"comparison": "above",
+		"critical_threshold": {
+			"duration_minutes": 3,
+			"time_function": "all",
+			"value": 90
+		},
+		"enabled": true,
+		"event_type": "${event_type}",
+		"name": "${name}",
+		"select_value": "cpuPercent",
+		"type": "${type}"
+	}
+}
