@@ -1,6 +1,14 @@
 # Change Log
 
 
+<a name="0.1.7"></a>
+# [0.1.7](https://github.com/IBM/newrelic-cli/compare/0.1.6...0.1.7) (2018-12-18)
+
+### Features
+
+* **Take template sub command:** add take template sub command ([#12](https://github.com/IBM/newrelic-cli/issues/12)) ([1a13530](https://github.com/IBM/newrelic-cli/commit/1a13530))
+
+
 <a name="0.1.6"></a>
 # [0.1.6](https://github.com/IBM/newrelic-cli/compare/0.1.5...0.1.6) (2018-11-29)
 
