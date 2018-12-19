@@ -178,19 +178,27 @@ func GetMonitors() ([]*newrelic.Monitor, error, tracker.ReturnValue) {
 
 			tracker.AppendRESTCallResult(client.SyntheticsScript, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, resp.StatusCode, "monitor id: "+id+", monitor name: "+(*monitor.Name))
 
-			if err != nil {
-				fmt.Println(err)
-				// var st *newrelic.Script
-				// st = &newrelic.Script{}
-				// scriptText = st
-				ret := tracker.ToReturnValue(false, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, err, tracker.ERR_REST_CALL, "")
-				return nil, err, ret
-			}
-			if resp.StatusCode >= 400 {
+			if resp.StatusCode == 404 {
 				var statusCode = resp.StatusCode
 				fmt.Printf("Response status code: %d. Get one monitor script, monitor id '%s', monitor name '%s'\n", statusCode, id, *monitor.Name)
-				ret := tracker.ToReturnValue(false, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, tracker.ERR_REST_CALL_NOT_2XX, tracker.ERR_REST_CALL_NOT_2XX, "monitor id: "+id+", monitor name: "+(*monitor.Name))
-				return nil, err, ret
+				s := new(newrelic.Script)
+				s.ScriptText = new(string)
+				scriptText = s
+			} else {
+				if err != nil {
+					fmt.Println(err)
+					// var st *newrelic.Script
+					// st = &newrelic.Script{}
+					// scriptText = st
+					ret := tracker.ToReturnValue(false, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, err, tracker.ERR_REST_CALL, "")
+					return nil, err, ret
+				}
+				if resp.StatusCode >= 400 {
+					var statusCode = resp.StatusCode
+					fmt.Printf("Response status code: %d. Get one monitor script, monitor id '%s', monitor name '%s'\n", statusCode, id, *monitor.Name)
+					ret := tracker.ToReturnValue(false, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, tracker.ERR_REST_CALL_NOT_2XX, tracker.ERR_REST_CALL_NOT_2XX, "monitor id: "+id+", monitor name: "+(*monitor.Name))
+					return nil, err, ret
+				}
 			}
 			monitor.Script = scriptText
 			monitorArray[i] = monitor
