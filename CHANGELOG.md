@@ -1,5 +1,12 @@
 # Change Log
 
+<a name="0.1.8"></a>
+# [0.1.8](https://github.com/IBM/newrelic-cli/compare/0.1.7...0.1.8) (2018-12-19)
+
+### Bug Fixes
+
+* **Failed to backup monitors:** fix bug about failed to backup monitors ([#13](https://github.com/IBM/newrelic-cli/issues/13)) ([abed73e](https://github.com/IBM/newrelic-cli/commit/abed73e))
+
 
 <a name="0.1.7"></a>
 # [0.1.7](https://github.com/IBM/newrelic-cli/compare/0.1.6...0.1.7) (2018-12-18)
