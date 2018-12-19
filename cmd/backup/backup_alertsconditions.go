@@ -142,6 +142,7 @@ var alertsconditionsCmd = &cobra.Command{
 			// alertPolicySet.MonitorList := []*newrelic.Monitor
 			for _, monitor := range syntheticsArray {
 				if monitor.MonitorID != nil {
+					fmt.Printf("Calling  GetMonitorByID() func, monitor id: %s\n", *monitor.MonitorID)
 					m, err, ret := get.GetMonitorByID(*monitor.MonitorID)
 					if err != nil {
 						fmt.Println(err)
