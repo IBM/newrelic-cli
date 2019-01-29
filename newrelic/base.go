@@ -246,12 +246,14 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	defer resp.Body.Close()
 
 	response := &Response{Response: resp}
+	var buf bytes.Buffer
+	tee := io.TeeReader(resp.Body, &buf)
 
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
-			io.Copy(w, resp.Body)
+			io.Copy(w, tee)
 		} else {
-			decErr := json.NewDecoder(resp.Body).Decode(v)
+			decErr := json.NewDecoder(tee).Decode(v)
 			if decErr == io.EOF {
 				decErr = nil // ignore EOF errors caused by empty response body
 			}
@@ -261,6 +263,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		}
 	}
 
+	response.Body = ioutil.NopCloser(&buf)
 	return response, err
 }
 
