@@ -6,7 +6,9 @@ import (
 )
 
 type infraConditions service
-type filterField map[string][]map[string]interface{}
+
+// FilterField type of filter field
+type FilterField map[string][]map[string]interface{}
 
 //AlertsInfrastructureConditionList list of infrastructure conditions
 type AlertsInfrastructureConditionList struct {
@@ -25,7 +27,7 @@ type AlertsInfrastructureCondition struct {
 	CreatedAtEpochMillis *int64       `json:"created_at_epoch_millis,omitempty"`
 	Enabled              *bool        `json:"enabled,omitempty"`
 	EventType            *string      `json:"event_type,omitempty"`
-	Filter               *filterField `json:"filter,omitempty"`
+	Filter               *FilterField `json:"filter,omitempty"`
 	ID                   *int64       `json:"id,omitempty"`
 	IntegrationProvider  *string      `json:"integration_provider,omitempty"`
 	Name                 *string      `json:"name,omitempty"`
