@@ -87,51 +87,6 @@ var monitorsCmd = &cobra.Command{
 			return
 		}
 
-		//get all labels
-		lablesArray, err, returnValue := get.GetLabels()
-		if returnValue.IsContinue == false {
-			exitBackupMonitorWithError(returnValue, resultFileName)
-			return
-		}
-
-		for index, _ := range lablesArray.Labels {
-			l := lablesArray.Labels[index]
-			key := fmt.Sprintf("%v:%v", *l.Category, *l.Name)
-
-			labelSynthetics, err, returnValue := get.GetMonitorsByLabel(key)
-			if err != nil {
-				fmt.Println(err)
-				exitBackupMonitorWithError(returnValue, resultFileName)
-				return
-			}
-			if returnValue.IsContinue == false {
-				exitBackupMonitorWithError(returnValue, resultFileName)
-				return
-			}
-
-			monitorRefList := labelSynthetics.MonitorRefs
-			var refListLen = len(monitorRefList)
-
-			if refListLen > 0 {
-				//the label was added to monitors
-				for _, ref := range monitorRefList {
-					//get monitor id
-					monitorId := *ref.ID
-					for _, monitor := range monitorArray {
-						if monitorId == (*monitor.ID) {
-							labLen := len(monitor.Labels)
-							var newLabelList = make([]*string, (labLen + 1))
-							for i := 0; i < labLen; i++ {
-								newLabelList[i] = monitor.Labels[i]
-							}
-							newLabelList[labLen] = &key
-							monitor.Labels = newLabelList
-						}
-					}
-				}
-			}
-		}
-
 		// var backupFileNameStr string = ""
 
 		for _, monitor := range monitorArray {
