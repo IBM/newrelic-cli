@@ -137,20 +137,25 @@ var alertsconditionsCmd = &cobra.Command{
 				allBackupPolicyMeta = append(allBackupPolicyMeta, backupPolicyMeta)
 				continue
 			}
-			syntheticsArray := conditionList.AlertsSyntheticsConditions
 
-			// alertPolicySet.MonitorList := []*newrelic.Monitor
-			for _, monitor := range syntheticsArray {
-				if monitor.MonitorID != nil {
-					fmt.Printf("Calling  GetMonitorByID() func, monitor id: %s\n", *monitor.MonitorID)
-					m, err, ret := get.GetMonitorByID(*monitor.MonitorID)
-					if err != nil {
-						fmt.Println(err)
+			bNodeps, _ := cmd.Flags().GetBool("no-deps")
+
+			if bNodeps == false {
+				syntheticsArray := conditionList.AlertsSyntheticsConditions
+
+				// alertPolicySet.MonitorList := []*newrelic.Monitor
+				for _, monitor := range syntheticsArray {
+					if monitor.MonitorID != nil {
+						fmt.Printf("Calling  GetMonitorByID() func, monitor id: %s\n", *monitor.MonitorID)
+						m, err, ret := get.GetMonitorByID(*monitor.MonitorID)
+						if err != nil {
+							fmt.Println(err)
+						}
+						if ret.IsContinue == false {
+							//ignore err
+						}
+						alertBackup.AlertDependencies.MonitorMap[*monitor.MonitorID] = m
 					}
-					if ret.IsContinue == false {
-						//ignore err
-					}
-					alertBackup.AlertDependencies.MonitorMap[*monitor.MonitorID] = m
 				}
 			}
 			alertPolicySet.AlertsConditionList = conditionList
@@ -261,6 +266,7 @@ func exitBackupAlertConditionsWithError(returnValue tracker.ReturnValue, resultF
 
 func init() {
 	BackupCmd.AddCommand(alertsconditionsCmd)
+	alertsconditionsCmd.PersistentFlags().BoolP("no-deps", "n", false, "Don't get associated monitor confiugration")
 
 	// Here you will define your flags and configuration settings.
 
