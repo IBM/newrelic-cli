@@ -20,6 +20,30 @@ import (
 	"path"
 )
 
+const (
+	monitorTagsQueryString = "query ($CURSOR: String) {\n  actor {\n" +
+		"    entitySearch(queryBuilder: {type: MONITOR}) {\n" +
+		"      count\n" +
+		"      results(cursor: $CURSOR) {\n" +
+		"        nextCursor\n" +
+		"        entities {\n" +
+		"          tags {\n" +
+		"            key\n" +
+		"            values\n" +
+		"          }\n" +
+		"          ... on SyntheticMonitorEntityOutline {\n" +
+		"            guid\n" +
+		"            name\n" +
+		"            monitorId\n" +
+		"          }\n" +
+		"        }\n" +
+		"      }\n" +
+		"    }\n" +
+		"  }\n" +
+		"}\n"
+	// monitorTagsQueryString = "{\n  actor {\n    entitySearch(query: \"type IN (\u0027MONITOR\u0027)\") {\n      count\n    }\n  }\n}\n"
+)
+
 type Monitor struct {
 	ID           *string        `json:"id,omitempty"`
 	Name         *string        `json:"name,omitempty"`
@@ -36,6 +60,21 @@ type Monitor struct {
 	Options      MonitorOptions `json:"options,omitempty"`
 	Script       *Script        `json:"script,omitempty"`
 	Labels       []*string      `json:"labels,omitempty"`
+	Tags         []*Tag         `json:"tags,omitempty"`
+}
+
+type MonitorTagsGraphqlVar struct {
+	Cursor *string `json:"CURSOR,omitempty"`
+}
+
+type Tag struct {
+	Key    *string   `json:"key"`
+	Values []*string `json:"values"`
+}
+
+type MonitorTagsQueryBody struct {
+	Query     *string                `json:"query"`
+	Variables *MonitorTagsGraphqlVar `json:"variables,omitempty"`
 }
 
 type MonitorOptions struct {
@@ -59,6 +98,35 @@ type MonitorListOptions struct {
 	PageLimitOptions
 }
 
+type MonitorTagsResp struct {
+	Data *Data `json:"data"`
+}
+
+type Data struct {
+	Actor *Actor `json:"actor"`
+}
+
+type Actor struct {
+	EntitySearch *EntitySearch `json:"entitySearch"`
+}
+
+type EntitySearch struct {
+	Count   *int                 `json:"count"`
+	Results *EntitySearchResults `json:"results"`
+}
+
+type EntitySearchResults struct {
+	Entities   []*EntitySearchResultsMonitor `json:"entities"`
+	NextCursor *string                       `json:"nextCursor"`
+}
+
+type EntitySearchResultsMonitor struct {
+	Guid      *string `json:"guid"`
+	MonitorId *string `json:"monitorId"`
+	Name      *string `json:"name"`
+	Tags      []*Tag  `json:"tags"`
+}
+
 type SyntheticsService service
 
 func (s *SyntheticsService) ListAll(ctx context.Context, opt *MonitorListOptions) (*MonitorList, *Response, error) {
@@ -80,6 +148,31 @@ func (s *SyntheticsService) ListAll(ctx context.Context, opt *MonitorListOptions
 		return nil, resp, err
 	}
 	return monitorList, resp, nil
+}
+
+func (s *SyntheticsService) ListTags(ctx context.Context, cursor *string) (*MonitorTagsResp, *Response, error) {
+	var q string = monitorTagsQueryString
+	var body *MonitorTagsQueryBody = &MonitorTagsQueryBody{
+		Query: &q}
+
+	if cursor != nil {
+		body.Variables = &MonitorTagsGraphqlVar{
+			Cursor: cursor}
+	}
+
+	req, err := s.client.NewRequest("POST", "", body)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	monitorTags := new(MonitorTagsResp)
+
+	resp, err := s.client.Do(ctx, req, monitorTags)
+	if err != nil {
+		return nil, resp, err
+	}
+	return monitorTags, resp, nil
 }
 
 func (s *SyntheticsService) GetByID(ctx context.Context, id string) (*Monitor, *Response, error) {

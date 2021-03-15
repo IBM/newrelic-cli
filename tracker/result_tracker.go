@@ -130,6 +130,7 @@ type ReturnValue struct {
 }
 
 var OPERATION_NAME_GET_MONITORS = "Get Monitors"
+var OPERATION_NAME_GET_MONITORTAGS = "Get Monitor Tags"
 var OPERATION_NAME_GET_MONITOR_BY_ID = "Get Monitor By ID"
 var OPERATION_NAME_GET_MONITOR_BY_NAME = "Get Monitor By Name"
 var OPERATION_NAME_GET_MONITOR_SCRIPT = "Get Monitor Script"

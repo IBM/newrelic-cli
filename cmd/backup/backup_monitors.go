@@ -87,23 +87,37 @@ var monitorsCmd = &cobra.Command{
 			return
 		}
 
-		// var backupFileNameStr string = ""
+		bSingle, _ := cmd.Flags().GetBool("single-file")
 
-		for _, monitor := range monitorArray {
-			var name = *monitor.Name
-			fileContent, err := json.MarshalIndent(monitor, "", "  ")
+		if bSingle == true {
+			fileContentBundle, err := json.MarshalIndent(monitorArray, "", "  ")
 			if err != nil {
 				fmt.Println(err)
 			}
-			var fileName = backupFolder + "/" + name + ".monitor.bak"
-			err = ioutil.WriteFile(fileName, fileContent, 0666)
+			var fileName = backupFolder + "/all-in-one-bundle.monitor.bak"
+			err = ioutil.WriteFile(fileName, fileContentBundle, 0666)
 			if err != nil {
 				fmt.Println(err)
 			}
-			// else {
-			// 	backupFileNameStr = backupFileNameStr + fileName + "\r\n"
-			// }
+		} else {
+			// var backupFileNameStr string = ""
 
+			for _, monitor := range monitorArray {
+				var name = *monitor.Name
+				fileContent, err := json.MarshalIndent(monitor, "", "  ")
+				if err != nil {
+					fmt.Println(err)
+				}
+				var fileName = backupFolder + "/" + name + ".monitor.bak"
+				err = ioutil.WriteFile(fileName, fileContent, 0666)
+				if err != nil {
+					fmt.Println(err)
+				}
+				// else {
+				// 	backupFileNameStr = backupFileNameStr + fileName + "\r\n"
+				// }
+
+			}
 		}
 
 		var fileContent = "No failed."

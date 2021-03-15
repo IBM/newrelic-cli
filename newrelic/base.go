@@ -40,6 +40,7 @@ const (
 	labelSyntheticsURL = "https://synthetics.newrelic.com/synthetics/api/v4/monitors/"
 	insightsURL        = "https://insights-collector.newrelic.com/v1/accounts/"
 	infrastructureURL  = "https://infra-api.newrelic.com/v2/alerts/"
+	graphqlURL         = "https://api.newrelic.com/graphql"
 )
 
 type Client struct {
@@ -107,6 +108,8 @@ func NewClient(httpClient *http.Client, endpointType string) *Client {
 		baseURL, _ = url.Parse(insightsURL)
 	case "infrastructure":
 		baseURL, _ = url.Parse(infrastructureURL)
+	case "graphql":
+		baseURL, _ = url.Parse(graphqlURL)
 	default:
 		baseURL, _ = url.Parse(defaultBaseURL)
 	}
@@ -147,9 +150,9 @@ func NewClient(httpClient *http.Client, endpointType string) *Client {
 }
 
 func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
-	if !strings.HasSuffix(c.BaseURL.Path, "/") {
+	/* 	if !strings.HasSuffix(c.BaseURL.Path, "/") {
 		return nil, fmt.Errorf("BaseURL must have a trailing slash, but %q does not", c.BaseURL)
-	}
+	} */
 	u, err := c.BaseURL.Parse(urlStr)
 	if err != nil {
 		return nil, err

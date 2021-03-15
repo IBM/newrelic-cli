@@ -157,14 +157,57 @@ func GetMonitors() ([]*newrelic.Monitor, error, tracker.ReturnValue) {
 		}
 
 	}
-
-	for _, m := range monitorArray {
-		m.Labels = make([]*string, 0)
+	tags, err := GetMonitorTags()
+	if err != nil {
+		for _, m := range monitorArray {
+			if tags[*m.ID] != nil {
+				m.Tags = tags[*m.ID].Tags
+			}
+		}
 	}
-	ret := tracker.ToReturnValue(true, tracker.OPERATION_NAME_GET_MONITORS, nil, nil, "")
+	ret := tracker.ToReturnValue(true, tracker.OPERATION_NAME_GET_MONITORS, err, nil, "")
 	return monitorArray, err, ret
 }
 
+func GetMonitorTags() (map[string]*newrelic.EntitySearchResultsMonitor, error) {
+	client, err := utils.GetNewRelicClient("graphql")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	m := make(map[string]*newrelic.EntitySearchResultsMonitor)
+	var cursor *string = nil
+	var c string = ""
+	for {
+		monitorTags, resp, err := client.SyntheticsMonitors.ListTags(context.Background(), cursor)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
+		if cursor != nil {
+			c = *cursor
+		}
+		tracker.AppendRESTCallResult(client.SyntheticsMonitors, tracker.OPERATION_NAME_GET_MONITORTAGS, resp.StatusCode, "cursor:"+c)
+
+		if resp.StatusCode >= 400 {
+			var statusCode = resp.StatusCode
+			fmt.Printf("Response status code: %d. Get monitor tags, query cursor: '%s'\n", statusCode, c)
+			return nil, tracker.ERR_REST_CALL_NOT_2XX
+		}
+		entities := monitorTags.Data.Actor.EntitySearch.Results.Entities
+
+		for _, e := range entities {
+			m[*e.MonitorId] = e
+		}
+
+		cursor = monitorTags.Data.Actor.EntitySearch.Results.NextCursor
+		if cursor == nil {
+			break
+		}
+
+	}
+	return m, err
+}
 func init() {
 	GetCmd.AddCommand(monitorsCmd)
 

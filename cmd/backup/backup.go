@@ -34,6 +34,8 @@ func init() {
 	BackupCmd.PersistentFlags().StringP("dir", "d", "", "Folder name to backup.")
 	BackupCmd.MarkPersistentFlagRequired("dir")
 
+	BackupCmd.PersistentFlags().BoolP("single-file", "s", false, "Save the configuration to a single file")
+
 	BackupCmd.PersistentFlags().StringP("result-file-name", "r", "", "Result file name")
 
 	// Cobra supports local flags which will only run when this command
