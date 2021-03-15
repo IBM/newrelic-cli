@@ -158,7 +158,7 @@ func GetMonitors() ([]*newrelic.Monitor, error, tracker.ReturnValue) {
 
 	}
 	tags, err := GetMonitorTags()
-	if err != nil {
+	if err == nil {
 		for _, m := range monitorArray {
 			if tags[*m.ID] != nil {
 				m.Tags = tags[*m.ID].Tags
