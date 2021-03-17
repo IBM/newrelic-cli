@@ -28,6 +28,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	MaxConcurrentTask int = 10
+)
+
 type AlertPolicySet struct {
 	AlertsPolicy        *newrelic.AlertsPolicy        `json:"policy,omitempty"`
 	AlertsConditionList *newrelic.AlertsConditionList `json:"alerts_conditions,omitempty"`
@@ -114,6 +118,29 @@ var alertsconditionsCmd = &cobra.Command{
 			exitBackupAlertConditionsWithError(returnValue, resultFileName)
 			return
 		}
+		conditionChMap := make(map[int64]chan *newrelic.AlertsConditionList)
+		chTaskCtrl := make(chan struct{}, MaxConcurrentTask)
+		defer close(chTaskCtrl)
+
+		for _, alertsPolicy := range allPolicyList.AlertsPolicies {
+			name := *alertsPolicy.Name
+			alertPolicyID := *alertsPolicy.ID
+			r := make(chan *newrelic.AlertsConditionList)
+			go func() {
+				defer close(r)
+				chTaskCtrl <- struct{}{}
+				fmt.Printf("Fetching alert conditions for Policy: %s\n", name)
+				conditionList, _, returnValue := get.GetAllConditionsByAlertPolicyID(alertPolicyID)
+				<-chTaskCtrl
+				if returnValue.IsContinue == false {
+					r <- nil
+					return
+				}
+				r <- conditionList
+				return
+			}()
+			conditionChMap[alertPolicyID] = r
+		}
 
 		for _, alertsPolicy := range allPolicyList.AlertsPolicies {
 			var backupPolicyMeta tracker.BackupPolicyMeta = tracker.BackupPolicyMeta{}
@@ -131,8 +158,8 @@ var alertsconditionsCmd = &cobra.Command{
 			// backupPolicyMeta.PolicyName = policyName
 
 			var alertPolicyID = alertsPolicy.ID
-			conditionList, _, returnValue := get.GetAllConditionsByAlertPolicyID(*alertPolicyID)
-			if returnValue.IsContinue == false {
+			conditionList := <-conditionChMap[*alertPolicyID]
+			if conditionList == nil {
 				backupPolicyMeta.OperationStatus = "fail"
 				allBackupPolicyMeta = append(allBackupPolicyMeta, backupPolicyMeta)
 				continue
