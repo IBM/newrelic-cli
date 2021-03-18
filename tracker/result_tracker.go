@@ -48,6 +48,7 @@ type BackupPolicyMetaList struct {
 }
 
 type BackupPolicyMeta struct {
+	Policy          string
 	FileName        string
 	OperationStatus string
 }

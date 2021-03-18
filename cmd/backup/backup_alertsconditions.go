@@ -98,6 +98,8 @@ var alertsconditionsCmd = &cobra.Command{
 			resultFileName = "fail-backup-alert-conditions-file-list.log"
 		}
 
+		bSingle, _ := cmd.Flags().GetBool("single-file")
+
 		var backupPolicyMetaList tracker.BackupPolicyMetaList = tracker.BackupPolicyMetaList{}
 		var allBackupPolicyMeta []tracker.BackupPolicyMeta
 
@@ -152,8 +154,13 @@ var alertsconditionsCmd = &cobra.Command{
 			var policyName = *alertsPolicy.Name
 			var ID = *alertsPolicy.ID
 			var fileNamePrefix = policyName + "-" + strconv.FormatInt(ID, 10)
-			var fileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
-			backupPolicyMeta.FileName = fileName
+			if bSingle == true {
+				backupPolicyMeta.Policy = fileNamePrefix
+				backupPolicyMeta.FileName = backupFolder + "/all-in-one-bundle.alert-conditions.bak"
+			} else {
+				backupPolicyMeta.Policy = strconv.FormatInt(ID, 10)
+				backupPolicyMeta.FileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
+			}
 			backupPolicyMeta.OperationStatus = "fail"
 			// backupPolicyMeta.PolicyName = policyName
 
@@ -210,24 +217,36 @@ var alertsconditionsCmd = &cobra.Command{
 
 		fmt.Println()
 
-		for _, policy := range alertBackup.AlertPolicySetList {
-			var onePolicy OneAlertBackup = OneAlertBackup{}
-
-			var name = *policy.AlertsPolicy.Name
-			var ID = *policy.AlertsPolicy.ID
-			var fileNamePrefix = name + "-" + strconv.FormatInt(ID, 10)
-
-			onePolicy.AlertPolicySet = policy
-			onePolicy.AlertDependencies = alertBackup.AlertDependencies
-
-			fileContent, err := json.MarshalIndent(onePolicy, "", "  ")
+		if bSingle == true {
+			fileContentBundle, err := json.MarshalIndent(alertBackup.AlertPolicySetList, "", "  ")
 			if err != nil {
 				fmt.Println(err)
 			}
-			var fileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
-			err = ioutil.WriteFile(fileName, fileContent, 0666)
+			var fileName = backupFolder + "/all-in-one-bundle.alert-conditions.bak"
+			err = ioutil.WriteFile(fileName, fileContentBundle, 0666)
 			if err != nil {
 				fmt.Println(err)
+			}
+		} else {
+			for _, policy := range alertBackup.AlertPolicySetList {
+				var onePolicy OneAlertBackup = OneAlertBackup{}
+
+				var name = *policy.AlertsPolicy.Name
+				var ID = *policy.AlertsPolicy.ID
+				var fileNamePrefix = name + "-" + strconv.FormatInt(ID, 10)
+
+				onePolicy.AlertPolicySet = policy
+				onePolicy.AlertDependencies = alertBackup.AlertDependencies
+
+				fileContent, err := json.MarshalIndent(onePolicy, "", "  ")
+				if err != nil {
+					fmt.Println(err)
+				}
+				var fileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
+				err = ioutil.WriteFile(fileName, fileContent, 0666)
+				if err != nil {
+					fmt.Println(err)
+				}
 			}
 		}
 

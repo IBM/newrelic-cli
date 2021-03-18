@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -220,6 +221,17 @@ func (c *Client) NewRequestForNonJSON(method, urlStr string, body string) (*http
 	return req, nil
 }
 
+func truncateString(str string, num int) string {
+	bnoden := str
+	if len(str) > num {
+		if num > 3 {
+			num -= 3
+		}
+		bnoden = str[0:num] + "..."
+	}
+	return bnoden
+}
+
 func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Response, error) {
 	var retries = c.Retries
 
@@ -227,8 +239,16 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	var err error
 	for retries > 0 {
 		resp, err = c.client.Do(req)
-		if err != nil {
-			log.Println(err)
+		if err != nil || resp.StatusCode > 299 {
+			if retries == 1 {
+				if err == nil {
+					bodyBytes, _ := ioutil.ReadAll(resp.Body)
+					bodyString := truncateString(string(bodyBytes), 100)
+					err = errors.New(fmt.Sprintf("%s %s returns status:%d body: %s", req.Method, req.URL.String(), resp.StatusCode, bodyString))
+				}
+				log.Println(err)
+				break
+			}
 			time.Sleep(time.Duration(3) * time.Second)
 			retries--
 		} else {
