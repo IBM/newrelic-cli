@@ -127,6 +127,7 @@ var monitorsCmd = &cobra.Command{
 			fmt.Println(err)
 		}
 
+		fmt.Println()
 		//print REST call
 		tracker.PrintStatisticsInfo(tracker.GlobalRESTCallResultList)
 		fmt.Println()

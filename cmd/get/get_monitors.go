@@ -27,6 +27,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	MaxConcurrentTask int = 10
+)
+
 // monitorsCmd represents the monitors command
 var monitorsCmd = &cobra.Command{
 	Use:   "monitors",
@@ -117,38 +121,43 @@ func GetMonitors() ([]*newrelic.Monitor, error, tracker.ReturnValue) {
 
 	var mListLen = len(mList.Monitors)
 	var monitorArray = make([]*newrelic.Monitor, mListLen)
+
+	scriptChMap := make(map[string]chan *newrelic.Script)
+	chTaskCtrl := make(chan struct{}, MaxConcurrentTask)
+	defer close(chTaskCtrl)
+
+	for i := 0; i < mListLen; i++ {
+		monitor := mList.Monitors[i]
+		if *monitor.Type == "SCRIPT_BROWSER" || *monitor.Type == "SCRIPT_API" {
+			r := make(chan *newrelic.Script)
+			id := *(monitor.ID)
+			name := *(monitor.Name)
+			go func() {
+				defer close(r)
+				chTaskCtrl <- struct{}{}
+				fmt.Printf("Fetching script for Monitor: %s\n", name)
+				scriptText, resp, err := client.SyntheticsScript.GetByID(context.Background(), id)
+				<-chTaskCtrl
+				tracker.AppendRESTCallResult(client.SyntheticsScript, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, resp.StatusCode, "monitor id: "+id+", monitor name: "+name)
+				if err != nil {
+					fmt.Println(err)
+					r <- nil
+					return
+				}
+				r <- scriptText
+				return
+			}()
+			scriptChMap[id] = r
+		}
+	}
+
 	for i := 0; i < mListLen; i++ {
 		monitor := mList.Monitors[i]
 		if *monitor.Type == "SCRIPT_BROWSER" || *monitor.Type == "SCRIPT_API" {
 			monitorID := monitor.ID
 			var id string = ""
 			id = *monitorID
-			scriptText, resp, err := client.SyntheticsScript.GetByID(context.Background(), id)
-
-			tracker.AppendRESTCallResult(client.SyntheticsScript, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, resp.StatusCode, "monitor id: "+id+", monitor name: "+(*monitor.Name))
-
-			if resp.StatusCode == 404 {
-				var statusCode = resp.StatusCode
-				fmt.Printf("Response status code: %d. Get one monitor script, monitor id '%s', monitor name '%s'\n", statusCode, id, *monitor.Name)
-				s := new(newrelic.Script)
-				s.ScriptText = new(string)
-				scriptText = s
-			} else {
-				if err != nil {
-					fmt.Println(err)
-					// var st *newrelic.Script
-					// st = &newrelic.Script{}
-					// scriptText = st
-					ret := tracker.ToReturnValue(false, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, err, tracker.ERR_REST_CALL, "")
-					return nil, err, ret
-				}
-				if resp.StatusCode >= 400 {
-					var statusCode = resp.StatusCode
-					fmt.Printf("Response status code: %d. Get one monitor script, monitor id '%s', monitor name '%s'\n", statusCode, id, *monitor.Name)
-					ret := tracker.ToReturnValue(false, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, tracker.ERR_REST_CALL_NOT_2XX, tracker.ERR_REST_CALL_NOT_2XX, "monitor id: "+id+", monitor name: "+(*monitor.Name))
-					return nil, err, ret
-				}
-			}
+			scriptText := <-scriptChMap[id]
 			monitor.Script = scriptText
 			monitorArray[i] = monitor
 
