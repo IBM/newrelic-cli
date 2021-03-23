@@ -75,6 +75,8 @@ var dashboardsCmd = &cobra.Command{
 			resultFileName = "backup-dashboards-file-list.log"
 		}
 
+		bSingle, _ := cmd.Flags().GetBool("single-file")
+
 		var backupDashboardMetaList tracker.BackupDashboardMetaList = tracker.BackupDashboardMetaList{}
 		var allBackupDashboardMeta []tracker.BackupDashboardMeta
 
@@ -94,6 +96,7 @@ var dashboardsCmd = &cobra.Command{
 		}
 
 		dashboardArr := gjson.Parse(resultStr).Get("dashboards").Array()
+		fileContentBundle := []byte("[")
 		for _, dashboard := range dashboardArr {
 			var backupDashboardMeta tracker.BackupDashboardMeta = tracker.BackupDashboardMeta{}
 
@@ -101,9 +104,13 @@ var dashboardsCmd = &cobra.Command{
 			title := gjson.Parse(dashboard.String()).Get("title")
 			name := title.String()
 			var fileName = backupFolder + "/" + name + "-" + id.String() + ".dashboard.bak"
+			if bSingle == true {
+				fileName = backupFolder + "/all-in-one-bundle.dashboard.bak"
+			}
 
 			backupDashboardMeta.FileName = fileName
 			backupDashboardMeta.OperationStatus = "fail"
+			backupDashboardMeta.DashBoard = id.String()
 
 			strDashboard, err, ret := get.GetDashboardByID(id.Int())
 			if err != nil {
@@ -114,17 +121,34 @@ var dashboardsCmd = &cobra.Command{
 					fmt.Println(ret.OriginalError)
 					continue
 				}
-				jsonDashboard := pretty.Pretty([]byte(strDashboard))
-				// fmt.Printf("%s\n", string(jsonDashboard))
-
-				err = ioutil.WriteFile(fileName, jsonDashboard, 0666)
-				if err != nil {
-					fmt.Println(err)
+				backupDashboardMeta.OperationStatus = "success"
+				if bSingle == true {
+					if len(fileContentBundle) > 2 {
+						fileContentBundle = append(fileContentBundle, byte(','))
+					}
+					fileContentBundle = append(fileContentBundle, strDashboard...)
 				} else {
-					backupDashboardMeta.OperationStatus = "success"
+					jsonDashboard := pretty.Pretty([]byte(strDashboard))
+					// fmt.Printf("%s\n", string(jsonDashboard))
+
+					err = ioutil.WriteFile(fileName, jsonDashboard, 0666)
+					if err != nil {
+						fmt.Println(err)
+					} else {
+						backupDashboardMeta.OperationStatus = "success"
+					}
 				}
 			}
 			allBackupDashboardMeta = append(allBackupDashboardMeta, backupDashboardMeta)
+		}
+
+		if bSingle == true {
+			fileContentBundle = append(fileContentBundle, byte(']'))
+			fileContentBundle := pretty.Pretty([]byte(fileContentBundle))
+			err = ioutil.WriteFile(backupFolder+"/all-in-one-bundle.dashboard.bak", fileContentBundle, 0666)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 
 		backupDashboardMetaList.AllBackupDashboardMeta = allBackupDashboardMeta
@@ -135,7 +159,7 @@ var dashboardsCmd = &cobra.Command{
 		tracker.PrintStatisticsInfo(backupDashboardMetaList)
 		fmt.Println()
 		writeFailDashboardConditionsFileList(resultFileName, allBackupDashboardMeta)
-
+		fmt.Println()
 		os.Exit(0)
 	},
 }

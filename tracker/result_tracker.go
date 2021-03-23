@@ -58,6 +58,7 @@ type BackupDashboardMetaList struct {
 }
 
 type BackupDashboardMeta struct {
+	DashBoard       string
 	FileName        string
 	OperationStatus string
 }
