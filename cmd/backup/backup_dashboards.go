@@ -97,6 +97,34 @@ var dashboardsCmd = &cobra.Command{
 
 		dashboardArr := gjson.Parse(resultStr).Get("dashboards").Array()
 		fileContentBundle := []byte("[")
+		dashboardChMap := make(map[string]chan string)
+		chTaskCtrl := make(chan struct{}, MaxConcurrentTask)
+		defer close(chTaskCtrl)
+
+		for _, dashboard := range dashboardArr {
+			r := make(chan string)
+			id := gjson.Parse(dashboard.String()).Get("id")
+			go func() {
+				defer close(r)
+				chTaskCtrl <- struct{}{}
+				fmt.Printf("Fetching dashboard: %s\n", id.String())
+				strDashboard, err, ret := get.GetDashboardByID(id.Int())
+				<-chTaskCtrl
+				if err != nil || ret.IsContinue == false {
+					if err != nil {
+						fmt.Println(err)
+					} else {
+						fmt.Println(ret.OriginalError)
+					}
+					r <- ""
+					return
+				}
+				r <- strDashboard
+				return
+			}()
+			dashboardChMap[id.String()] = r
+		}
+
 		for _, dashboard := range dashboardArr {
 			var backupDashboardMeta tracker.BackupDashboardMeta = tracker.BackupDashboardMeta{}
 
@@ -112,15 +140,10 @@ var dashboardsCmd = &cobra.Command{
 			backupDashboardMeta.OperationStatus = "fail"
 			backupDashboardMeta.DashBoard = id.String()
 
-			strDashboard, err, ret := get.GetDashboardByID(id.Int())
-			if err != nil {
-				fmt.Println(err)
+			strDashboard := <-dashboardChMap[id.String()]
+			if strDashboard == "" {
 				continue
 			} else {
-				if ret.IsContinue == false {
-					fmt.Println(ret.OriginalError)
-					continue
-				}
 				backupDashboardMeta.OperationStatus = "success"
 				if bSingle == true {
 					if len(fileContentBundle) > 2 {
@@ -153,6 +176,7 @@ var dashboardsCmd = &cobra.Command{
 
 		backupDashboardMetaList.AllBackupDashboardMeta = allBackupDashboardMeta
 
+		fmt.Println()
 		//print REST call
 		tracker.PrintStatisticsInfo(tracker.GlobalRESTCallResultList)
 		fmt.Println()
