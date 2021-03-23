@@ -41,6 +41,7 @@ type BackupMonitorMeta struct {
 	Labels     []string
 	LabelCount int
 	ID         string
+	FileName   string
 }
 
 type BackupPolicyMetaList struct {
@@ -392,7 +393,7 @@ func GetDescByStatusCode(serviceInstance interface{}, statusCode int) string {
 	return desc
 }
 
-func GenerateBackupMonitorMeta(monitorList []*newrelic.Monitor) BackupMonitorMetaList {
+func GenerateBackupMonitorMeta(monitorList []*newrelic.Monitor, backupFolder string, singleFile bool) BackupMonitorMetaList {
 	var backupMonitorMetaList []BackupMonitorMeta
 	for _, monitor := range monitorList {
 		var m BackupMonitorMeta = BackupMonitorMeta{}
@@ -413,6 +414,11 @@ func GenerateBackupMonitorMeta(monitorList []*newrelic.Monitor) BackupMonitorMet
 			var labelLen = len(m.Labels)
 			m.LabelCount = labelLen
 		}
+		if singleFile == true {
+			m.FileName = backupFolder + "/all-in-one-bundle.monitor.bak"
+		} else {
+			m.FileName = backupFolder + "/" + m.Name + ".monitor.bak"
+		}
 		backupMonitorMetaList = append(backupMonitorMetaList, m)
 	}
 
@@ -428,8 +434,8 @@ func PrintStatisticsInfo(obj interface{}) {
 	printer.Print(obj, os.Stdout)
 }
 
-func PrintBackupMonitorInfo(monitorList []*newrelic.Monitor) {
-	allList := GenerateBackupMonitorMeta(monitorList)
+func PrintBackupMonitorInfo(monitorList []*newrelic.Monitor, backupFolder string, singleFile bool) {
+	allList := GenerateBackupMonitorMeta(monitorList, backupFolder, singleFile)
 	PrintStatisticsInfo(allList)
 	var monitorLen = len(monitorList)
 	var msg = strconv.Itoa(monitorLen) + " monitors backuped."

@@ -132,7 +132,7 @@ var monitorsCmd = &cobra.Command{
 		tracker.PrintStatisticsInfo(tracker.GlobalRESTCallResultList)
 		fmt.Println()
 		//print statistics monitor list
-		tracker.PrintBackupMonitorInfo(monitorArray)
+		tracker.PrintBackupMonitorInfo(monitorArray, backupFolder, bSingle)
 
 		fmt.Println()
 
