@@ -51,6 +51,8 @@ func GetNewRelicClient(ctype ...string) (*newrelic.Client, error) {
 			client = newrelic.NewClient(httpClient, "synthetics")
 		} else if ctype[0] == "labelSynthetics" {
 			client = newrelic.NewClient(httpClient, "labelSynthetics")
+		} else if ctype[0] == "graphql" {
+			client = newrelic.NewClient(httpClient, "graphql")
 		} else if ctype[0] == "insights" {
 			client = newrelic.NewClient(httpClient, "insights")
 			needCheckAPIKey = false

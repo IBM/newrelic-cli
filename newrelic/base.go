@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -40,6 +41,7 @@ const (
 	labelSyntheticsURL = "https://synthetics.newrelic.com/synthetics/api/v4/monitors/"
 	insightsURL        = "https://insights-collector.newrelic.com/v1/accounts/"
 	infrastructureURL  = "https://infra-api.newrelic.com/v2/alerts/"
+	graphqlURL         = "https://api.newrelic.com/graphql"
 )
 
 type Client struct {
@@ -107,6 +109,8 @@ func NewClient(httpClient *http.Client, endpointType string) *Client {
 		baseURL, _ = url.Parse(insightsURL)
 	case "infrastructure":
 		baseURL, _ = url.Parse(infrastructureURL)
+	case "graphql":
+		baseURL, _ = url.Parse(graphqlURL)
 	default:
 		baseURL, _ = url.Parse(defaultBaseURL)
 	}
@@ -147,9 +151,9 @@ func NewClient(httpClient *http.Client, endpointType string) *Client {
 }
 
 func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
-	if !strings.HasSuffix(c.BaseURL.Path, "/") {
+	/* 	if !strings.HasSuffix(c.BaseURL.Path, "/") {
 		return nil, fmt.Errorf("BaseURL must have a trailing slash, but %q does not", c.BaseURL)
-	}
+	} */
 	u, err := c.BaseURL.Parse(urlStr)
 	if err != nil {
 		return nil, err
@@ -217,6 +221,17 @@ func (c *Client) NewRequestForNonJSON(method, urlStr string, body string) (*http
 	return req, nil
 }
 
+func truncateString(str string, num int) string {
+	bnoden := str
+	if len(str) > num {
+		if num > 3 {
+			num -= 3
+		}
+		bnoden = str[0:num] + "..."
+	}
+	return bnoden
+}
+
 func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Response, error) {
 	var retries = c.Retries
 
@@ -224,8 +239,16 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	var err error
 	for retries > 0 {
 		resp, err = c.client.Do(req)
-		if err != nil {
-			log.Println(err)
+		if err != nil || resp.StatusCode > 299 {
+			if retries == 1 {
+				if err == nil {
+					bodyBytes, _ := ioutil.ReadAll(resp.Body)
+					bodyString := truncateString(string(bodyBytes), 100)
+					err = errors.New(fmt.Sprintf("%s %s returns status:%d body: %s", req.Method, req.URL.String(), resp.StatusCode, bodyString))
+				}
+				log.Println(err)
+				break
+			}
 			time.Sleep(time.Duration(3) * time.Second)
 			retries--
 		} else {

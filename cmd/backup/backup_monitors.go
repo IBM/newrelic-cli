@@ -87,68 +87,37 @@ var monitorsCmd = &cobra.Command{
 			return
 		}
 
-		//get all labels
-		lablesArray, err, returnValue := get.GetLabels()
-		if returnValue.IsContinue == false {
-			exitBackupMonitorWithError(returnValue, resultFileName)
-			return
-		}
+		bSingle, _ := cmd.Flags().GetBool("single-file")
 
-		for index, _ := range lablesArray.Labels {
-			l := lablesArray.Labels[index]
-			key := fmt.Sprintf("%v:%v", *l.Category, *l.Name)
-
-			labelSynthetics, err, returnValue := get.GetMonitorsByLabel(key)
+		if bSingle == true {
+			fileContentBundle, err := json.MarshalIndent(monitorArray, "", "  ")
 			if err != nil {
 				fmt.Println(err)
-				exitBackupMonitorWithError(returnValue, resultFileName)
-				return
 			}
-			if returnValue.IsContinue == false {
-				exitBackupMonitorWithError(returnValue, resultFileName)
-				return
+			var fileName = backupFolder + "/all-in-one-bundle.monitor.bak"
+			err = ioutil.WriteFile(fileName, fileContentBundle, 0666)
+			if err != nil {
+				fmt.Println(err)
 			}
+		} else {
+			// var backupFileNameStr string = ""
 
-			monitorRefList := labelSynthetics.MonitorRefs
-			var refListLen = len(monitorRefList)
-
-			if refListLen > 0 {
-				//the label was added to monitors
-				for _, ref := range monitorRefList {
-					//get monitor id
-					monitorId := *ref.ID
-					for _, monitor := range monitorArray {
-						if monitorId == (*monitor.ID) {
-							labLen := len(monitor.Labels)
-							var newLabelList = make([]*string, (labLen + 1))
-							for i := 0; i < labLen; i++ {
-								newLabelList[i] = monitor.Labels[i]
-							}
-							newLabelList[labLen] = &key
-							monitor.Labels = newLabelList
-						}
-					}
+			for _, monitor := range monitorArray {
+				var name = *monitor.Name
+				fileContent, err := json.MarshalIndent(monitor, "", "  ")
+				if err != nil {
+					fmt.Println(err)
 				}
-			}
-		}
+				var fileName = backupFolder + "/" + name + ".monitor.bak"
+				err = ioutil.WriteFile(fileName, fileContent, 0666)
+				if err != nil {
+					fmt.Println(err)
+				}
+				// else {
+				// 	backupFileNameStr = backupFileNameStr + fileName + "\r\n"
+				// }
 
-		// var backupFileNameStr string = ""
-
-		for _, monitor := range monitorArray {
-			var name = *monitor.Name
-			fileContent, err := json.MarshalIndent(monitor, "", "  ")
-			if err != nil {
-				fmt.Println(err)
 			}
-			var fileName = backupFolder + "/" + name + ".monitor.bak"
-			err = ioutil.WriteFile(fileName, fileContent, 0666)
-			if err != nil {
-				fmt.Println(err)
-			}
-			// else {
-			// 	backupFileNameStr = backupFileNameStr + fileName + "\r\n"
-			// }
-
 		}
 
 		var fileContent = "No failed."
@@ -158,11 +127,12 @@ var monitorsCmd = &cobra.Command{
 			fmt.Println(err)
 		}
 
+		fmt.Println()
 		//print REST call
 		tracker.PrintStatisticsInfo(tracker.GlobalRESTCallResultList)
 		fmt.Println()
 		//print statistics monitor list
-		tracker.PrintBackupMonitorInfo(monitorArray)
+		tracker.PrintBackupMonitorInfo(monitorArray, backupFolder, bSingle)
 
 		fmt.Println()
 

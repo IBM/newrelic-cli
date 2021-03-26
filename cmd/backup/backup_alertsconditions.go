@@ -28,6 +28,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	MaxConcurrentTask int = 10
+)
+
 type AlertPolicySet struct {
 	AlertsPolicy        *newrelic.AlertsPolicy        `json:"policy,omitempty"`
 	AlertsConditionList *newrelic.AlertsConditionList `json:"alerts_conditions,omitempty"`
@@ -94,6 +98,8 @@ var alertsconditionsCmd = &cobra.Command{
 			resultFileName = "fail-backup-alert-conditions-file-list.log"
 		}
 
+		bSingle, _ := cmd.Flags().GetBool("single-file")
+
 		var backupPolicyMetaList tracker.BackupPolicyMetaList = tracker.BackupPolicyMetaList{}
 		var allBackupPolicyMeta []tracker.BackupPolicyMeta
 
@@ -114,6 +120,29 @@ var alertsconditionsCmd = &cobra.Command{
 			exitBackupAlertConditionsWithError(returnValue, resultFileName)
 			return
 		}
+		conditionChMap := make(map[int64]chan *newrelic.AlertsConditionList)
+		chTaskCtrl := make(chan struct{}, MaxConcurrentTask)
+		defer close(chTaskCtrl)
+
+		for _, alertsPolicy := range allPolicyList.AlertsPolicies {
+			name := *alertsPolicy.Name
+			alertPolicyID := *alertsPolicy.ID
+			r := make(chan *newrelic.AlertsConditionList)
+			go func() {
+				defer close(r)
+				chTaskCtrl <- struct{}{}
+				fmt.Printf("Fetching alert conditions for Policy: %s\n", name)
+				conditionList, _, returnValue := get.GetAllConditionsByAlertPolicyID(alertPolicyID)
+				<-chTaskCtrl
+				if returnValue.IsContinue == false {
+					r <- nil
+					return
+				}
+				r <- conditionList
+				return
+			}()
+			conditionChMap[alertPolicyID] = r
+		}
 
 		for _, alertsPolicy := range allPolicyList.AlertsPolicies {
 			var backupPolicyMeta tracker.BackupPolicyMeta = tracker.BackupPolicyMeta{}
@@ -125,32 +154,42 @@ var alertsconditionsCmd = &cobra.Command{
 			var policyName = *alertsPolicy.Name
 			var ID = *alertsPolicy.ID
 			var fileNamePrefix = policyName + "-" + strconv.FormatInt(ID, 10)
-			var fileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
-			backupPolicyMeta.FileName = fileName
+			if bSingle == true {
+				backupPolicyMeta.Policy = fileNamePrefix
+				backupPolicyMeta.FileName = backupFolder + "/all-in-one-bundle.alert-conditions.bak"
+			} else {
+				backupPolicyMeta.Policy = strconv.FormatInt(ID, 10)
+				backupPolicyMeta.FileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
+			}
 			backupPolicyMeta.OperationStatus = "fail"
 			// backupPolicyMeta.PolicyName = policyName
 
 			var alertPolicyID = alertsPolicy.ID
-			conditionList, _, returnValue := get.GetAllConditionsByAlertPolicyID(*alertPolicyID)
-			if returnValue.IsContinue == false {
+			conditionList := <-conditionChMap[*alertPolicyID]
+			if conditionList == nil {
 				backupPolicyMeta.OperationStatus = "fail"
 				allBackupPolicyMeta = append(allBackupPolicyMeta, backupPolicyMeta)
 				continue
 			}
-			syntheticsArray := conditionList.AlertsSyntheticsConditions
 
-			// alertPolicySet.MonitorList := []*newrelic.Monitor
-			for _, monitor := range syntheticsArray {
-				if monitor.MonitorID != nil {
-					fmt.Printf("Calling  GetMonitorByID() func, monitor id: %s\n", *monitor.MonitorID)
-					m, err, ret := get.GetMonitorByID(*monitor.MonitorID)
-					if err != nil {
-						fmt.Println(err)
+			bNodeps, _ := cmd.Flags().GetBool("no-deps")
+
+			if bNodeps == false {
+				syntheticsArray := conditionList.AlertsSyntheticsConditions
+
+				// alertPolicySet.MonitorList := []*newrelic.Monitor
+				for _, monitor := range syntheticsArray {
+					if monitor.MonitorID != nil {
+						fmt.Printf("Calling  GetMonitorByID() func, monitor id: %s\n", *monitor.MonitorID)
+						m, err, ret := get.GetMonitorByID(*monitor.MonitorID)
+						if err != nil {
+							fmt.Println(err)
+						}
+						if ret.IsContinue == false {
+							//ignore err
+						}
+						alertBackup.AlertDependencies.MonitorMap[*monitor.MonitorID] = m
 					}
-					if ret.IsContinue == false {
-						//ignore err
-					}
-					alertBackup.AlertDependencies.MonitorMap[*monitor.MonitorID] = m
 				}
 			}
 			alertPolicySet.AlertsConditionList = conditionList
@@ -178,24 +217,36 @@ var alertsconditionsCmd = &cobra.Command{
 
 		fmt.Println()
 
-		for _, policy := range alertBackup.AlertPolicySetList {
-			var onePolicy OneAlertBackup = OneAlertBackup{}
-
-			var name = *policy.AlertsPolicy.Name
-			var ID = *policy.AlertsPolicy.ID
-			var fileNamePrefix = name + "-" + strconv.FormatInt(ID, 10)
-
-			onePolicy.AlertPolicySet = policy
-			onePolicy.AlertDependencies = alertBackup.AlertDependencies
-
-			fileContent, err := json.MarshalIndent(onePolicy, "", "  ")
+		if bSingle == true {
+			fileContentBundle, err := json.MarshalIndent(alertBackup.AlertPolicySetList, "", "  ")
 			if err != nil {
 				fmt.Println(err)
 			}
-			var fileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
-			err = ioutil.WriteFile(fileName, fileContent, 0666)
+			var fileName = backupFolder + "/all-in-one-bundle.alert-conditions.bak"
+			err = ioutil.WriteFile(fileName, fileContentBundle, 0666)
 			if err != nil {
 				fmt.Println(err)
+			}
+		} else {
+			for _, policy := range alertBackup.AlertPolicySetList {
+				var onePolicy OneAlertBackup = OneAlertBackup{}
+
+				var name = *policy.AlertsPolicy.Name
+				var ID = *policy.AlertsPolicy.ID
+				var fileNamePrefix = name + "-" + strconv.FormatInt(ID, 10)
+
+				onePolicy.AlertPolicySet = policy
+				onePolicy.AlertDependencies = alertBackup.AlertDependencies
+
+				fileContent, err := json.MarshalIndent(onePolicy, "", "  ")
+				if err != nil {
+					fmt.Println(err)
+				}
+				var fileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
+				err = ioutil.WriteFile(fileName, fileContent, 0666)
+				if err != nil {
+					fmt.Println(err)
+				}
 			}
 		}
 
@@ -261,6 +312,7 @@ func exitBackupAlertConditionsWithError(returnValue tracker.ReturnValue, resultF
 
 func init() {
 	BackupCmd.AddCommand(alertsconditionsCmd)
+	alertsconditionsCmd.PersistentFlags().BoolP("no-deps", "n", false, "Don't get associated monitor confiugration")
 
 	// Here you will define your flags and configuration settings.
 

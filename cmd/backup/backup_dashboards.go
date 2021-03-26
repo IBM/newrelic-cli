@@ -75,6 +75,8 @@ var dashboardsCmd = &cobra.Command{
 			resultFileName = "backup-dashboards-file-list.log"
 		}
 
+		bSingle, _ := cmd.Flags().GetBool("single-file")
+
 		var backupDashboardMetaList tracker.BackupDashboardMetaList = tracker.BackupDashboardMetaList{}
 		var allBackupDashboardMeta []tracker.BackupDashboardMeta
 
@@ -94,6 +96,35 @@ var dashboardsCmd = &cobra.Command{
 		}
 
 		dashboardArr := gjson.Parse(resultStr).Get("dashboards").Array()
+		fileContentBundle := []byte("[")
+		dashboardChMap := make(map[string]chan string)
+		chTaskCtrl := make(chan struct{}, MaxConcurrentTask)
+		defer close(chTaskCtrl)
+
+		for _, dashboard := range dashboardArr {
+			r := make(chan string)
+			id := gjson.Parse(dashboard.String()).Get("id")
+			go func() {
+				defer close(r)
+				chTaskCtrl <- struct{}{}
+				fmt.Printf("Fetching dashboard: %s\n", id.String())
+				strDashboard, err, ret := get.GetDashboardByID(id.Int())
+				<-chTaskCtrl
+				if err != nil || ret.IsContinue == false {
+					if err != nil {
+						fmt.Println(err)
+					} else {
+						fmt.Println(ret.OriginalError)
+					}
+					r <- ""
+					return
+				}
+				r <- strDashboard
+				return
+			}()
+			dashboardChMap[id.String()] = r
+		}
+
 		for _, dashboard := range dashboardArr {
 			var backupDashboardMeta tracker.BackupDashboardMeta = tracker.BackupDashboardMeta{}
 
@@ -101,41 +132,58 @@ var dashboardsCmd = &cobra.Command{
 			title := gjson.Parse(dashboard.String()).Get("title")
 			name := title.String()
 			var fileName = backupFolder + "/" + name + "-" + id.String() + ".dashboard.bak"
+			if bSingle == true {
+				fileName = backupFolder + "/all-in-one-bundle.dashboard.bak"
+			}
 
 			backupDashboardMeta.FileName = fileName
 			backupDashboardMeta.OperationStatus = "fail"
+			backupDashboardMeta.DashBoard = id.String()
 
-			strDashboard, err, ret := get.GetDashboardByID(id.Int())
-			if err != nil {
-				fmt.Println(err)
+			strDashboard := <-dashboardChMap[id.String()]
+			if strDashboard == "" {
 				continue
 			} else {
-				if ret.IsContinue == false {
-					fmt.Println(ret.OriginalError)
-					continue
-				}
-				jsonDashboard := pretty.Pretty([]byte(strDashboard))
-				// fmt.Printf("%s\n", string(jsonDashboard))
-
-				err = ioutil.WriteFile(fileName, jsonDashboard, 0666)
-				if err != nil {
-					fmt.Println(err)
+				backupDashboardMeta.OperationStatus = "success"
+				if bSingle == true {
+					if len(fileContentBundle) > 2 {
+						fileContentBundle = append(fileContentBundle, byte(','))
+					}
+					fileContentBundle = append(fileContentBundle, strDashboard...)
 				} else {
-					backupDashboardMeta.OperationStatus = "success"
+					jsonDashboard := pretty.Pretty([]byte(strDashboard))
+					// fmt.Printf("%s\n", string(jsonDashboard))
+
+					err = ioutil.WriteFile(fileName, jsonDashboard, 0666)
+					if err != nil {
+						fmt.Println(err)
+					} else {
+						backupDashboardMeta.OperationStatus = "success"
+					}
 				}
 			}
 			allBackupDashboardMeta = append(allBackupDashboardMeta, backupDashboardMeta)
 		}
 
+		if bSingle == true {
+			fileContentBundle = append(fileContentBundle, byte(']'))
+			fileContentBundle := pretty.Pretty([]byte(fileContentBundle))
+			err = ioutil.WriteFile(backupFolder+"/all-in-one-bundle.dashboard.bak", fileContentBundle, 0666)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+
 		backupDashboardMetaList.AllBackupDashboardMeta = allBackupDashboardMeta
 
+		fmt.Println()
 		//print REST call
 		tracker.PrintStatisticsInfo(tracker.GlobalRESTCallResultList)
 		fmt.Println()
 		tracker.PrintStatisticsInfo(backupDashboardMetaList)
 		fmt.Println()
 		writeFailDashboardConditionsFileList(resultFileName, allBackupDashboardMeta)
-
+		fmt.Println()
 		os.Exit(0)
 	},
 }

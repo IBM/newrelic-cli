@@ -93,46 +93,6 @@ func GetMonitorByID(id string) (*newrelic.Monitor, error, tracker.ReturnValue) {
 	// 	fmt.Printf("%v:%v\n", resp.Status, err)
 	// 	return nil, err
 	// }
-	monitor.Labels = make([]*string, 0)
-
-	//get all labels
-	lablesArray, err, _ := GetLabels()
-
-	for index, _ := range lablesArray.Labels {
-		l := lablesArray.Labels[index]
-		key := fmt.Sprintf("%v:%v", *l.Category, *l.Name)
-
-		labelSynthetics, err, returnValue := GetMonitorsByLabel(key)
-		if returnValue.IsContinue == false {
-			return nil, err, returnValue
-		}
-		// if err != nil {
-		// 	fmt.Println(err)
-		// 	return nil, err
-		// }
-
-		monitorRefList := labelSynthetics.MonitorRefs
-		var refListLen = len(monitorRefList)
-
-		if refListLen > 0 {
-			//the label was added to monitors
-			for _, ref := range monitorRefList {
-				//get monitor id
-				monitorId := *ref.ID
-				if monitorId == (*monitor.ID) {
-					labLen := len(monitor.Labels)
-					var newLabelList = make([]*string, (labLen + 1))
-					for i := 0; i < labLen; i++ {
-						newLabelList[i] = monitor.Labels[i]
-					}
-					newLabelList[labLen] = &key
-					monitor.Labels = newLabelList
-				}
-			}
-		} else {
-			//the label was not used by any monitors, skip
-		}
-	}
 
 	if *monitor.Type == "SCRIPT_BROWSER" || *monitor.Type == "SCRIPT_API" {
 		monitorID := monitor.ID
