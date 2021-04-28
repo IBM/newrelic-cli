@@ -56,6 +56,8 @@ func GetNewRelicClient(ctype ...string) (*newrelic.Client, error) {
 		} else if ctype[0] == "insights" {
 			client = newrelic.NewClient(httpClient, "insights")
 			needCheckAPIKey = false
+		} else if ctype[0] == "infrastructure" {
+			client = newrelic.NewClient(httpClient, "infrastructure")
 		}
 	}
 
