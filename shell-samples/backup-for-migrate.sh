@@ -147,6 +147,41 @@ do
         break
     fi
 done
+
+echo ""
+${basepath}/nr get alertschannels > "$targetFolder/all-in-one-bundle.alertschannels.bak"
+exitCode=$?""
+
+if [ $exitCode == "0" ];then
+    echo ""
+    echo ">>>>>>>>Success, backup alertschannels complete."
+else
+    echo ""
+    echo ">>>>>>>>Backup alertschannels failed, begin to retry..."
+fi
+
+counter=0
+while [ $exitCode != "0" ]
+do
+    counter=`expr $counter + 1`
+    ${basepath}/nr get alertschannels > "$targetFolder/all-in-one-bundle.alertschannels.bak"
+    exitCode=$?""
+
+    if [ $exitCode != "0" ];then
+        echo ""
+        echo "Backup alertschannels failed in this retry: "$counter"."
+        if [ $counter -ge 3 ];then
+            echo ""
+            echo ">>>>>>>>Retry 3 times, backup quit."
+            exit 1
+        fi
+    else
+        echo ""
+        echo ">>>>>>>>Success, backup alertschannels complete."
+        break
+    fi
+done
+
 echo ""
 echo "Backup for migration complete"
 
