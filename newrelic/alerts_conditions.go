@@ -53,6 +53,7 @@ type AlertsConditionList struct {
 	*AlertsNRQLConditionList
 	*AlertsPluginsConditionList
 	*AlertsSyntheticsConditionList
+	*AlertsLocationConditionList
 	*AlertsInfrastructureConditionList
 }
 
