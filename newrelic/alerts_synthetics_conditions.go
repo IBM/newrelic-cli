@@ -38,25 +38,6 @@ type AlertsSyntheticsConditionEntity struct {
 	AlertsSyntheticsCondition *AlertsSyntheticsCondition `json:"synthetics_condition,omitempty"`
 }
 
-type LocationTerm struct {
-	Priority  *string `json:"priority,omitempty"`
-	Threshold *int64  `json:"threshold,omitempty"`
-}
-
-type AlertsLocationConditionList struct {
-	AlertsLocationConditions []*AlertsLocationCondition `json:"location_failure_conditions,omitempty"`
-}
-
-type AlertsLocationCondition struct {
-	ID         *int64          `json:"id,omitempty"`
-	Name       *string         `json:"name,omitempty"`
-	RunbookURL *string         `json:"runbook_url,omitempty"`
-	Enabled    *bool           `json:"enabled,omitempty"`
-	Entities   []*string       `json:"entities,omitempty"`
-	Terms      []*LocationTerm `json:"terms,omitempty"`
-	TimeLimit  *int64          `json:"violation_time_limit_seconds,omitempty"`
-}
-
 func (s *syntheticsConditions) listAll(ctx context.Context, list *AlertsConditionList, opt *AlertsConditionsOptions) (*Response, error) {
 	u, err := addOptions("alerts_synthetics_conditions.json", opt)
 	if err != nil {
@@ -73,17 +54,6 @@ func (s *syntheticsConditions) listAll(ctx context.Context, list *AlertsConditio
 		return resp, err
 	}
 
-	u = "alerts_location_failure_conditions/policies/" + opt.PolicyIDOptions + ".json"
-	req, err = s.client.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	list.AlertsLocationConditionList = new(AlertsLocationConditionList)
-	resp, err = s.client.Do(ctx, req, list.AlertsLocationConditionList)
-	if err != nil {
-		return resp, err
-	}
 	return resp, nil
 }
 

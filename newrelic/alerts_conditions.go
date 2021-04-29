@@ -26,6 +26,7 @@ const (
 	ConditionPlugins         ConditionCategory = "plugins_condition"
 	ConditionExternalService ConditionCategory = "external_service_condition"
 	ConditionSynthetics      ConditionCategory = "synthetics_condition"
+	ConditionLocation        ConditionCategory = "location_condition"
 	ConditionNRQL            ConditionCategory = "nrql_condition"
 	ConditionInfrastructure  ConditionCategory = "infrastructure_condition"
 )
@@ -37,6 +38,7 @@ type AlertsConditionsService struct {
 	*pluginsConditions
 	*externalServiceConditions
 	*syntheticsConditions
+	*locationConditions
 	*nrqlConditions
 	*infraConditions
 }
@@ -126,6 +128,8 @@ func (s *AlertsConditionsService) listByCategory(cat ConditionCategory) func(ctx
 		return s.pluginsConditions.listAll
 	case ConditionSynthetics:
 		return s.syntheticsConditions.listAll
+	case ConditionLocation:
+		return s.locationConditions.listAll
 	case ConditionInfrastructure:
 		return s.infraConditions.listAll
 	default:
