@@ -104,6 +104,13 @@ var alertsconditionsCmd = &cobra.Command{
 					return
 				}
 				alertsConditionList = list
+				// location_failure_conditions uses different methods for pagination,
+				// if a page requested doesn't exist, it returns the first page instead of empty entires.
+				// use seperate logic to get location_failure_conditions, instead of adding it in ListAll
+				list, resp, err := client.AlertsConditions.List(context.Background(), conditionsOptions, newrelic.ConditionLocation)
+				if err == nil && resp.StatusCode >= 200 && resp.StatusCode <= 299 {
+					alertsConditionList.AlertsLocationConditionList = list.AlertsLocationConditionList
+				}
 			}
 		} else {
 			list, err := client.AlertsConditions.ListAll(context.Background(), conditionsOptions)
@@ -113,6 +120,13 @@ var alertsconditionsCmd = &cobra.Command{
 				return
 			}
 			alertsConditionList = list
+			// location_failure_conditions uses different methods for pagination,
+			// if a page requested doesn't exist, it returns the first page instead of empty entires.
+			// use seperate logic to get location_failure_conditions, instead of adding it in ListAll
+			list, resp, err := client.AlertsConditions.List(context.Background(), conditionsOptions, newrelic.ConditionLocation)
+			if err == nil && resp.StatusCode >= 200 && resp.StatusCode <= 299 {
+				alertsConditionList.AlertsLocationConditionList = list.AlertsLocationConditionList
+			}
 		}
 
 		if err != nil {
@@ -178,6 +192,17 @@ func GetAllConditionsByAlertPolicyID(id int64) (*newrelic.AlertsConditionList, e
 			pageCount++
 		}
 	}
+
+	// location_failure_conditions uses different methods for pagination,
+	// if a page requested doesn't exist, it returns the first page instead of empty entires.
+	// use seperate logic to get location_failure_conditions
+	list, resp, err := client.AlertsConditions.List(context.Background(), conditionsOptions, newrelic.ConditionLocation)
+	if err != nil || resp.StatusCode >= 400 {
+		ret := tracker.ToReturnValue(false, tracker.OPERATION_NAME_GET_CONDITIONS_BY_POLICY_ID, fmt.Errorf("%v.Response: %v. Error: %v.", newrelic.ConditionLocation, resp, err), tracker.ERR_REST_CALL, "")
+		return nil, err, ret
+	}
+	allList.AlertsLocationConditionList = &newrelic.AlertsLocationConditionList{}
+	allList.AlertsLocationConditions = append(allList.AlertsLocationConditions, list.AlertsLocationConditions...)
 
 	ret := tracker.ToReturnValue(true, tracker.OPERATION_NAME_GET_CONDITIONS_BY_POLICY_ID, nil, nil, "")
 

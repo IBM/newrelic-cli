@@ -134,6 +134,7 @@ func NewClient(httpClient *http.Client, endpointType string) *Client {
 	c.AlertsConditions.pluginsConditions = (*pluginsConditions)(&c.common)
 	c.AlertsConditions.externalServiceConditions = (*externalServiceConditions)(&c.common)
 	c.AlertsConditions.syntheticsConditions = (*syntheticsConditions)(&c.common)
+	c.AlertsConditions.locationConditions = (*locationConditions)(&c.common)
 	c.AlertsConditions.nrqlConditions = (*nrqlConditions)(&c.common)
 	c.AlertsConditions.infraConditions = (*infraConditions)(&c.common)
 

@@ -27,13 +27,23 @@ type AlertsNRQLConditionList struct {
 }
 
 type AlertsNRQLCondition struct {
-	ID            *int64                   `json:"id,omitempty"`
-	Name          *string                  `json:"name,omitempty"`
-	RunbookURL    *string                  `json:"runbook_url,omitempty"`
-	Enabled       *bool                    `json:"enabled,omitempty"`
-	Terms         []*AlertsConditionTerm   `json:"terms,omitempty"`
-	ValueFunction *string                  `json:"value_function,omitempty"`
-	NRQL          *AlertsNRQLConditionNRQL `json:"nrql,omitempty"`
+	Type                      *string                    `json:"type,omitempty"`
+	ViolationTimeLimitSeconds *int64                     `json:"violation_time_limit_seconds"`
+	ID                        *int64                     `json:"id,omitempty"`
+	Name                      *string                    `json:"name,omitempty"`
+	RunbookURL                *string                    `json:"runbook_url,omitempty"`
+	Enabled                   *bool                      `json:"enabled,omitempty"`
+	Terms                     []*AlertsConditionTerm     `json:"terms,omitempty"`
+	ValueFunction             *string                    `json:"value_function,omitempty"`
+	NRQL                      *AlertsNRQLConditionNRQL   `json:"nrql,omitempty"`
+	Signal                    *AlertsNRQLConditionSignal `json:"signal,omitempty"`
+}
+
+type AlertsNRQLConditionSignal struct {
+	AggregationWindow *string `json:"aggregation_window,omitempty"`
+	EvaluationOffset  *string `json:"evaluation_offset,omitempty"`
+	FillOption        *string `json:"fill_option,omitempty"`
+	FillValue         *string `json:"fill_value,omitempty"`
 }
 
 type AlertsNRQLConditionNRQL struct {
