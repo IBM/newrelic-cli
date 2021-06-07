@@ -138,7 +138,11 @@ func GetMonitors() ([]*newrelic.Monitor, error, tracker.ReturnValue) {
 				fmt.Printf("Fetching script for Monitor: %s\n", name)
 				scriptText, resp, err := client.SyntheticsScript.GetByID(context.Background(), id)
 				<-chTaskCtrl
-				tracker.AppendRESTCallResult(client.SyntheticsScript, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, resp.StatusCode, "monitor id: "+id+", monitor name: "+name)
+				statusCode := -1
+				if resp != nil {
+					statusCode = resp.StatusCode
+				}
+				tracker.AppendRESTCallResult(client.SyntheticsScript, tracker.OPERATION_NAME_GET_MONITOR_SCRIPT, statusCode, "monitor id: "+id+", monitor name: "+name)
 				if err != nil {
 					fmt.Println(err)
 					r <- nil

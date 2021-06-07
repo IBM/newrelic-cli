@@ -20,11 +20,11 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -238,19 +238,21 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 
 	var resp *http.Response
 	var err error
+	sleepBase := 30
 	for retries > 0 {
 		resp, err = c.client.Do(req)
 		if err != nil || resp.StatusCode > 299 {
 			if retries == 1 {
-				if err == nil {
+				if resp != nil {
 					bodyBytes, _ := ioutil.ReadAll(resp.Body)
 					bodyString := truncateString(string(bodyBytes), 100)
-					err = errors.New(fmt.Sprintf("%s %s returns status:%d body: %s", req.Method, req.URL.String(), resp.StatusCode, bodyString))
+					fmt.Printf("%s %s returns status:%d body: %s", req.Method, req.URL.String(), resp.StatusCode, bodyString)
 				}
-				log.Println(err)
+				fmt.Println(err)
 				break
 			}
-			time.Sleep(time.Duration(3) * time.Second)
+			time.Sleep(time.Duration(sleepBase+rand.Intn(30)) * time.Second)
+			sleepBase = sleepBase * 2
 			retries--
 		} else {
 			break
