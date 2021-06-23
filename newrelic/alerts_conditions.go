@@ -74,7 +74,8 @@ func (s *AlertsConditionsService) ListAll(ctx context.Context, opt *AlertsCondit
 	}
 
 	list := new(AlertsConditionList)
-	cats := []ConditionCategory{ConditionDefault, ConditionPlugins, ConditionExternalService, ConditionSynthetics, ConditionNRQL, ConditionInfrastructure}
+	//cats := []ConditionCategory{ConditionDefault, ConditionPlugins, ConditionExternalService, ConditionSynthetics, ConditionNRQL, ConditionInfrastructure}
+	cats := []ConditionCategory{ConditionDefault, ConditionExternalService, ConditionSynthetics, ConditionNRQL, ConditionInfrastructure}
 	for _, cat := range cats {
 		// TODO: paralleize and use ctx.Done() to cancel the parent context
 		listFunc := s.listByCategory(cat)
