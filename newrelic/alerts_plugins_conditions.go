@@ -30,7 +30,7 @@ type AlertsPluginsCondition struct {
 	ID                *int64                        `json:"id,omitempty"`
 	Name              *string                       `json:"name,omitempty"`
 	Enabled           *bool                         `json:"enabled,omitempty"`
-	Entities          []*int64                      `json:"entities,omitempty"`
+	Entities          []*string                     `json:"entities,omitempty"`
 	MetricDescription *string                       `json:"metric_description,omitempty"`
 	Metric            *string                       `json:"metric,omitempty"`
 	ValueFunction     *string                       `json:"value_function,omitempty"`

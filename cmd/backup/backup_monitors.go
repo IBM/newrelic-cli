@@ -23,6 +23,7 @@ import (
 
 	"github.com/IBM/newrelic-cli/cmd/get"
 	"github.com/IBM/newrelic-cli/tracker"
+	"github.com/IBM/newrelic-cli/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -108,7 +109,7 @@ var monitorsCmd = &cobra.Command{
 				if err != nil {
 					fmt.Println(err)
 				}
-				var fileName = backupFolder + "/" + name + ".monitor.bak"
+				var fileName = backupFolder + "/" + utils.FileNameEscape(name) + ".monitor.bak"
 				err = ioutil.WriteFile(fileName, fileContent, 0666)
 				if err != nil {
 					fmt.Println(err)

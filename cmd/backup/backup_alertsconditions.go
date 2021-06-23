@@ -25,6 +25,7 @@ import (
 	"github.com/IBM/newrelic-cli/cmd/get"
 	"github.com/IBM/newrelic-cli/newrelic"
 	"github.com/IBM/newrelic-cli/tracker"
+	"github.com/IBM/newrelic-cli/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -159,7 +160,7 @@ var alertsconditionsCmd = &cobra.Command{
 				backupPolicyMeta.FileName = backupFolder + "/all-in-one-bundle.alert-conditions.bak"
 			} else {
 				backupPolicyMeta.Policy = strconv.FormatInt(ID, 10)
-				backupPolicyMeta.FileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
+				backupPolicyMeta.FileName = backupFolder + "/" + utils.FileNameEscape(fileNamePrefix) + ".alert-conditions.bak"
 			}
 			backupPolicyMeta.OperationStatus = "fail"
 			// backupPolicyMeta.PolicyName = policyName
@@ -242,7 +243,7 @@ var alertsconditionsCmd = &cobra.Command{
 				if err != nil {
 					fmt.Println(err)
 				}
-				var fileName = backupFolder + "/" + fileNamePrefix + ".alert-conditions.bak"
+				var fileName = backupFolder + "/" + utils.FileNameEscape(fileNamePrefix) + ".alert-conditions.bak"
 				err = ioutil.WriteFile(fileName, fileContent, 0666)
 				if err != nil {
 					fmt.Println(err)

@@ -417,7 +417,7 @@ func GenerateBackupMonitorMeta(monitorList []*newrelic.Monitor, backupFolder str
 		if singleFile == true {
 			m.FileName = backupFolder + "/all-in-one-bundle.monitor.bak"
 		} else {
-			m.FileName = backupFolder + "/" + m.Name + ".monitor.bak"
+			m.FileName = backupFolder + "/" + utils.FileNameEscape(m.Name) + ".monitor.bak"
 		}
 		backupMonitorMetaList = append(backupMonitorMetaList, m)
 	}

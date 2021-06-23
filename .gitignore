@@ -5,3 +5,4 @@
 /my-debug
 *.log
 /.vscode
+/tmp

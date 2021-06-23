@@ -23,6 +23,7 @@ import (
 
 	"github.com/IBM/newrelic-cli/cmd/get"
 	"github.com/IBM/newrelic-cli/tracker"
+	"github.com/IBM/newrelic-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/pretty"
@@ -131,7 +132,7 @@ var dashboardsCmd = &cobra.Command{
 			id := gjson.Parse(dashboard.String()).Get("id")
 			title := gjson.Parse(dashboard.String()).Get("title")
 			name := title.String()
-			var fileName = backupFolder + "/" + name + "-" + id.String() + ".dashboard.bak"
+			var fileName = backupFolder + "/" + utils.FileNameEscape(name) + "-" + id.String() + ".dashboard.bak"
 			if bSingle == true {
 				fileName = backupFolder + "/all-in-one-bundle.dashboard.bak"
 			}

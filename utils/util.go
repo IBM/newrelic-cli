@@ -21,6 +21,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/IBM/newrelic-cli/newrelic"
 )
@@ -291,4 +292,10 @@ func MergeAlertChannelList(s1 []*newrelic.AlertsChannel, s2 []*newrelic.AlertsCh
 	}
 
 	return slice
+}
+
+func FileNameEscape(origName string) string {
+	name := strings.Replace(origName, ":", "%3A", -1)
+	name = strings.Replace(name, "/", "%2F", -1)
+	return name
 }
