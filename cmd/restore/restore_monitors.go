@@ -138,9 +138,7 @@ var monitorsCmd = &cobra.Command{
 		}
 
 		if len(restoreFileNames) > 0 {
-			for _, fileName := range restoreFileNames {
-				restoreFileNameList = append(restoreFileNameList, fileName)
-			}
+			restoreFileNameList = append(restoreFileNameList, restoreFileNames...)
 		}
 
 		var filesLen = len(restoreFileNameList)
