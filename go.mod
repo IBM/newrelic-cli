@@ -28,7 +28,6 @@ require (
 	github.com/tidwall/match v1.0.0 // indirect
 	github.com/tidwall/pretty v0.0.0-20180105212114-65a9db5fad51
 	github.com/tidwall/sjson v1.0.0
-	golang.org/x/sys v0.0.0-20180810173357-98c5dad5d1a0 // indirect
-	golang.org/x/text v0.3.0 // indirect
+	golang.org/x/text v0.3.8 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )
